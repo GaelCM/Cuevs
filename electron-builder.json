@@ -1,0 +1,17 @@
+{
+    "appId": "com.electron.sistemaCuevs",
+    "icon": "./src/electron/mascota.png",
+    "files": [
+        "dist-react/**/*",
+        "src/electron/**/*"
+    ],
+    "mac": {
+        "target": ["dmg"]
+    },
+    "win": {
+        "target": ["portable", "msi"]
+    },
+    "linux": {
+        "target": ["AppImage"]
+    }
+}
