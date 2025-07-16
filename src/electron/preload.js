@@ -15,6 +15,8 @@ contextBridge.exposeInMainWorld('electronApi', {
     nuevaVenta: (totalVenta, idUsuario, status, productos, pago) => ipcRenderer.invoke('nueva-venta', totalVenta, idUsuario, status, productos, pago),
     ///////////////////////////////
     getCategorias: () => ipcRenderer.invoke('get-categorias'),
+    insertarCategoria: (categoria) => ipcRenderer.invoke('insertar-categoria', categoria),
+    getCategoriaById: (idCategoria) => ipcRenderer.invoke('get-categoria-by-id', idCategoria),
     ///////////////////////////////
     reporteVentas: (fechaDesde, fechaHasta) => ipcRenderer.invoke('reporte-ventas', fechaDesde, fechaHasta),
     detalleVenta: (idVenta) => ipcRenderer.invoke('detalle-venta', idVenta),

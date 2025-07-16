@@ -38,6 +38,8 @@ declare global {
         nuevaVenta: (totalVenta: number, idUsuario: number, status: number, productos: ProductoItem[], pago:number) => Promise<VentaResponse>;
         ///////////////////////////////
         getCategorias: () => Promise<Categorias[]>;
+        insertarCategoria: (categoria: Categorias) => Promise<{success:boolean, message:string}>;
+        getCategoriaById: (idCategoria: number) => Promise<Categorias>;
         ///////////////////////////////
         reporteVentas: (fechaDesde: string, fechaHasta: string) => Promise<Venta[]>;
         detalleVenta: (idVenta: string) => Promise<DetalleVenta[]>;

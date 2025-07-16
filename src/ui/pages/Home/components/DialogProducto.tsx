@@ -23,6 +23,7 @@ export default function DialogProducto({product, isOpen, onOpenChange} :DialogPr
             addProduct(product)
         }
         onOpenChange(false)
+        
     }
 
     return(

@@ -44,6 +44,7 @@ export function Navbar(){
                   
                   <Button className="bg-red-500 hover:bg-rose-400 cursor-pointer" onClick={()=>{
                     localStorage.removeItem('token')
+                    localStorage.removeItem('currentUser')
                     navigate("/login")
                   }}>Cerrar sesion</Button>
 

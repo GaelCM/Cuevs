@@ -19,9 +19,10 @@ const busquedaSchema = z.object({
 
 export function Busqueda(){
   const [producto, setProducto] = React.useState<Producto | null>(null);
-    const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-    const {register,handleSubmit,formState: { errors }} = useForm<z.infer<typeof busquedaSchema>>({
+    const {register, handleSubmit, reset, formState: { errors }} = useForm<z.infer<typeof busquedaSchema>>({
         resolver: zodResolver(busquedaSchema),
         defaultValues: {
           producto: "",
@@ -33,6 +34,10 @@ export function Busqueda(){
         if(res){
             setProducto(res)
             setOpen(true)
+            reset() // Resetea el formulario después de buscar
+            if(inputRef.current) {
+                inputRef.current.focus(); // Enfoca el input después de buscar
+            }
         }else{
             setProducto(null)
             setOpen(true)

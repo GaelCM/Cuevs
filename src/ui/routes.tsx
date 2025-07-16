@@ -9,7 +9,8 @@ import { ReporteVentasDetailPage } from "./pages/Reportes/ReportesVentas/reporte
 import { AuthGuard } from "./auth/AuthGuard";
 import Login from "./auth/Login/page";
 import UsuariosPage from "./pages/Usuarios/Usuarios";
-// import { LoginPage } from "./pages/Login/LoginPage";
+import CategoriasPage from "./pages/Categorias/Categorias";
+import EditCategoriasPage from "./pages/EditCategorias/EditCategorias";
 
 export const routes = createHashRouter([
   {
@@ -30,6 +31,14 @@ export const routes = createHashRouter([
           {
             path: "/productos",
             element: <ProductosPage />,
+          },
+          {
+            path: "/categorias",
+            element: <CategoriasPage/>,
+          },
+          {
+            path: "/categorias/editCategoria",
+            element: <EditCategoriasPage />,
           },
           {
             path: "/productos/detalleProducto",
