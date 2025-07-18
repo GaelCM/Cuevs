@@ -29,10 +29,10 @@ export const getProductosLocal = async (): Promise<Producto[]|null> => {
 }
 
 
-export const insertarProductoLocal = async (producto:Producto) => {
+export const insertarProductoLocal = async (producto:Producto,idUsuario:number) => {
 
   if (isClient && window.electronApi?.insertarProducto) {
-    const res = await window.electronApi.insertarProducto(producto);
+    const res = await window.electronApi.insertarProducto(producto,idUsuario);
     if (!res) {
       console.log("Producto no insertado:", res);
       return null
@@ -42,9 +42,9 @@ export const insertarProductoLocal = async (producto:Producto) => {
   }
 }
 
-export const actualizarProducto= async (producto:Producto) => {
+export const actualizarProducto= async (producto:Producto, idUsuario:number) => {
   if (isClient && window.electronApi?.updateProducto) {
-    const res = await window.electronApi.updateProducto(producto);
+    const res = await window.electronApi.updateProducto(producto,idUsuario);
     if (!res) {
       console.log("Producto no actualizado:", res);
       return null

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Producto } from "@/types/Productos";
-import { Pencil, Search, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
@@ -91,20 +91,14 @@ export default function TablaDeProductos(){
                 <Table>
                     <TableHeader>
                         <TableRow>
-                        <TableHead className="hidden w-[100px] sm:table-cell">
-                           ID
-                        </TableHead>
-                        <TableHead>Nombre</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead className="hidden md:table-cell">
-                            Precio
-                        </TableHead>
-                        <TableHead className="hidden md:table-cell">
-                            Descripción
-                        </TableHead>
-                        <TableHead>
-                            Acciones
-                        </TableHead>
+                            <TableHead className="hidden w-[100px] sm:table-cell">ID</TableHead>
+                            <TableHead>Nombre</TableHead>
+                            <TableHead>Estado</TableHead>
+                            <TableHead className="hidden md:table-cell">Precio</TableHead>
+                            <TableHead className="hidden md:table-cell">Descripción</TableHead>
+                            <TableHead className="hidden md:table-cell">Stock Actual</TableHead>
+                            <TableHead className="hidden md:table-cell">Unidad Medida</TableHead>
+                            <TableHead>Acciones</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -115,20 +109,37 @@ export default function TablaDeProductos(){
                                 <TableCell>
                                     <Badge variant={producto.idEstado === 1 ? "outline" : "destructive"}>
                                         {producto.idEstado === 1 ? 'Activo' : 'Inactivo'}
-                                        
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell">${producto.precio.toFixed(2)}</TableCell>
+
                                 <TableCell className="hidden md:table-cell">{producto.descripcion}</TableCell>
+
+                                <TableCell className="hidden md:table-cell">
+                                    <div className="flex items-center justify-center gap-2">
+                                        {producto.stockActual <= producto.stockMinimo ? (
+                                            <>
+                                                <ArrowDown className="w-4 h-4 text-red-700" />
+                                                {producto.stockActual}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ArrowUp className="w-4 h-4 text-green-500" />
+                                                {producto.stockActual}
+                                            </>
+                                        )}
+                                    </div>
+                                </TableCell>
+
+                                <TableCell className="hidden md:table-cell">{producto.unidadMedida}</TableCell>
+
                                 <TableCell>
                                     <div className="flex gap-2">
-                                        
                                         <Link to={`/productos/detalleProducto?id=${producto.idProducto}`} className="hover:bg-gray-100 rounded-md p-1 cursor-pointer">
                                             <Button size="icon" variant="outline">
                                                 <Pencil className="h-4 w-4" />
                                             </Button>
                                         </Link>
-                                        
                                         <Button
                                             size="icon"
                                             variant="destructive"

@@ -7,6 +7,10 @@ export type Producto = {
     descripcion: string;
     idCategoria: number;
     idEstado: number;
+    stockActual: number;
+    stockMinimo: number;
+    stockMaximo: number;
+    unidadMedida: string;
 }
 
 export interface ProductoItem {

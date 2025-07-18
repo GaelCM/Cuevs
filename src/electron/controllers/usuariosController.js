@@ -9,7 +9,7 @@ function registerUsuariosController(){
         const res = stmt.all(); // aqui se obtiene todas las categorias el .all() es para obtener todas las categorias
        // Mapear a UsuarioPublico (sin password_hash)
         const usuariosPublicos = res.map(usuario => ({
-            id: usuario.id,
+            idUsuario: usuario.idUsuario,
             usuario: usuario.usuario,
             email: usuario.email,
             nombre: usuario.nombre,

@@ -16,7 +16,7 @@ type globalUserModel = {
 
 export const useUserData = create<globalUserModel>((set, get) => ({
     user: localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser') as string) : {
-        id: 0,
+        idUsuario: 0,
         usuario: "",
         email: "",
         nombre: "",
@@ -25,6 +25,6 @@ export const useUserData = create<globalUserModel>((set, get) => ({
         fecha_creacion: "",
     },
     setUser: (user: UsuarioPublico) => set({ user }),
-    clearUser: () => set({ user: {id: 0, usuario: "", email: "", nombre: "", apellidos: "", activo: "1", fecha_creacion: ""} }),
+    clearUser: () => set({ user: {idUsuario: 0, usuario: "", email: "", nombre: "", apellidos: "", activo: "1", fecha_creacion: ""} }),
     getUser: () => get().user,
 }));

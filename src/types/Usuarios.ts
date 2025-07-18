@@ -1,6 +1,6 @@
 // Tipo principal para el usuario completo (como viene de la base de datos)
 export interface Usuario {
-    id: number;
+    idUsuario: number;
     usuario: string;
     password_hash: string;
     email: string | null;
@@ -29,7 +29,7 @@ export interface Usuario {
   
   // Tipo para datos públicos del usuario (sin información sensible)
   export interface UsuarioPublico {
-    id: number;
+    idUsuario: number;
     usuario: string;
     email: string | null;
     nombre: string | null;

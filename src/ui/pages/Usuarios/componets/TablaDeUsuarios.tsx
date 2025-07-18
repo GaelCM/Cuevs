@@ -83,8 +83,8 @@ export default function TablaDeUsuarios(){
                     </TableHeader>
                     <TableBody>
                         {currentUsuarios.map((usuario) =>(
-                            <TableRow key={usuario.id}>
-                                <TableCell className="font-medium">{usuario.id}</TableCell>
+                            <TableRow key={usuario.idUsuario}>
+                                <TableCell className="font-medium">{usuario.idUsuario}</TableCell>
                                 <TableCell className="font-medium">{usuario.usuario}</TableCell>
                                 <TableCell>{usuario.nombre}</TableCell>
                                 <TableCell>{usuario.apellidos}</TableCell>

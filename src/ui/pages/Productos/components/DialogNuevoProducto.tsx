@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useUserData } from "@/hooks/globalUser";
 import type { Categorias } from "@/types/Productos";
 import type { EstadoVenta } from "@/types/ventas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,10 +25,9 @@ type dialogProps={
 }
 
 const nuevoProductoForm = z.object({
-
     idProducto: z.string().min(2, {
-    message: "El código del producto debe tener al menos 2 caracteres",
-    }),  
+        message: "El código del producto debe tener al menos 2 caracteres",
+    }),
     nombreProducto: z.string().min(2, {
         message: "El nombre del producto debe tener al menos 2 caracteres",
     }),
@@ -40,13 +40,20 @@ const nuevoProductoForm = z.object({
     }),
     idEstado: z.enum(["1", "0"], {
         errorMap: () => ({ message: "Debe seleccionar un estado" }),
-    })
-})
+    }),
+    stockActual: z.number().min(0, { message: "Stock actual debe ser positivo" }),
+    stockMinimo: z.number().min(0, { message: "Stock mínimo debe ser positivo" }),
+    stockMaximo: z.number().min(0, { message: "Stock máximo debe ser positivo" }),
+    unidadMedida: z.string().min(1, { message: "Debe ingresar la unidad de medida" }),
+});
 
 export function DialogNuevoProducto({open, onOpenChange}: dialogProps) {
 
     const [estado, setEstado] = useState<EstadoVenta>("inicio");
     const [categorias, setCategorias] = useState<Categorias[]>([]);
+
+    const {getUser}=useUserData();
+
 
 
     const form = useForm<z.infer<typeof nuevoProductoForm>>({
@@ -58,19 +65,29 @@ export function DialogNuevoProducto({open, onOpenChange}: dialogProps) {
             descripcion: "",
             idCategoria: "",
             idEstado: "1",
+            stockActual: 0,
+            stockMinimo: 0,
+            stockMaximo: 0,
+            unidadMedida: "",
         },
     });
 
     const registrarProduto =async(values: z.infer<typeof nuevoProductoForm>)=> {
         setEstado("cargando"); // Iniciar loading
+        const user = getUser();
+        console.log("Usuario actual:", user);
         const response=await insertarProductoLocal({
             idProducto: values.idProducto,
             nombreProducto:values.nombreProducto,
             precio: values.precio,
             descripcion: values.descripcion || "",
             idCategoria: parseInt(values.idCategoria),
-            idEstado: parseInt(values.idEstado)
-        })
+            idEstado: parseInt(values.idEstado),
+            stockActual: values.stockActual,
+            stockMinimo: values.stockMinimo,
+            stockMaximo: values.stockMaximo,
+            unidadMedida: values.unidadMedida,
+        },user.idUsuario);
         if(!response?.success){
             toast.error('Error al registrar el producto', {
                 description:`${response?.message}`,})
@@ -97,120 +114,270 @@ export function DialogNuevoProducto({open, onOpenChange}: dialogProps) {
 
     return (
         <Dialog open={open} onOpenChange={() => { onOpenChange(false) }}>
-            {estado==="inicio"&& (
-                <DialogContent className="sm:max-w-4xl">
-                <form onSubmit={form.handleSubmit(registrarProduto)}>
-                    <DialogHeader>
-                        <DialogTitle className="text-4xl font-bold text-center p-3">Agregar Nuevo Producto</DialogTitle>
-                        <DialogDescription className="text-center text-gray-500">
-                            Inserte un nuevo producto en el sistema. Asegúrese de completar todos los campos requeridos.
-                        </DialogDescription>
-                    </DialogHeader>
+            
+        {estado === "inicio" && (
+        <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto">
+            <form onSubmit={form.handleSubmit(registrarProduto)}>
+            <DialogHeader className="pb-6">
+                <DialogTitle className="text-3xl font-bold text-center">
+                Agregar Nuevo Producto
+                </DialogTitle>
+                <DialogDescription className="text-center text-muted-foreground">
+                Complete todos los campos requeridos para registrar un nuevo producto en el sistema.
+                </DialogDescription>
+            </DialogHeader>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 py-3">
-                        {/* Columna Izquierda */}
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-4 items-center gap-4 py-3">
-                                <Label htmlFor="idProducto" className="text-right">
-                                    Código
-                                </Label>
-                                <Input
-                                    id="idProducto"
-                                    {...form.register("idProducto")}
-                                    className="col-span-2"
-                                />
-                                <p className="text-red-500 text-center text-xs col-span-4">{form.formState.errors.idProducto?.message}</p>
-                            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-6">
+                {/* Columna Izquierda - Información Básica */}
+                <div className="space-y-6">
+                <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-foreground border-b pb-2">
+                    Información Básica
+                    </h3>
+                </div>
 
-                            <div className="grid grid-cols-4 items-center gap-4 py-3">
-                                <Label htmlFor="idCategoria" className="text-right">
-                                    Categoría
-                                </Label>
-                                <Select
-                                    onValueChange={value => form.setValue("idCategoria", value)}
-                                    value={form.watch("idCategoria")}
-                                >
-                                    <SelectTrigger className="col-span-3">
-                                        <SelectValue placeholder="Selecciona la categoría" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categorias.map((categoria) => (
-                                            <SelectItem key={categoria.idCategoria} value={categoria.idCategoria.toString()}>
-                                                {categoria.categoriaName}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <p className="text-red-500 text-center text-xs col-span-4">{form.formState.errors.idCategoria?.message}</p>
-                            </div>
+                <div className="space-y-2">
+                    <Label htmlFor="idProducto" className="text-sm font-medium">
+                    Código del Producto <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                    id="idProducto"
+                    {...form.register("idProducto")}
+                    placeholder="Ingrese el código del producto"
+                    className="w-full"
+                    />
+                    {form.formState.errors.idProducto && (
+                    <p className="text-red-500 text-sm">
+                        {form.formState.errors.idProducto.message}
+                    </p>
+                    )}
+                </div>
 
-                            <div className="grid grid-cols-4 items-center gap-4 py-3">
-                                <Label htmlFor="idEstado" className="text-right">
-                                    Estado
-                                </Label>
-                                <Select
-                                    onValueChange={value => form.setValue("idEstado", value as "0" | "1")}
-                                    value={form.watch("idEstado")}
-                                >
-                                    <SelectTrigger className="col-span-3">
-                                        <SelectValue placeholder="Selecciona el estado" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="1">Activo</SelectItem>
-                                        <SelectItem value="0">Inactivo</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <p className="text-red-500 text-center text-xs col-span-4">{form.formState.errors.idEstado?.message}</p>
-                            </div>
+                <div className="space-y-2">
+                    <Label htmlFor="nombreProducto" className="text-sm font-medium">
+                    Nombre del Producto <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                    id="nombreProducto"
+                    {...form.register("nombreProducto")}
+                    placeholder="Ingrese el nombre del producto"
+                    className="w-full"
+                    />
+                    {form.formState.errors.nombreProducto && (
+                    <p className="text-red-500 text-sm">
+                        {form.formState.errors.nombreProducto.message}
+                    </p>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="idCategoria" className="text-sm font-medium">
+                    Categoría <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                    onValueChange={value => form.setValue("idCategoria", value)}
+                    value={form.watch("idCategoria")}
+                    >
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecciona la categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {categorias.map((categoria) => (
+                        <SelectItem key={categoria.idCategoria} value={categoria.idCategoria.toString()}>
+                            {categoria.categoriaName}
+                        </SelectItem>
+                        ))}
+                    </SelectContent>
+                    </Select>
+                    {form.formState.errors.idCategoria && (
+                    <p className="text-red-500 text-sm">
+                        {form.formState.errors.idCategoria.message}
+                    </p>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="idEstado" className="text-sm font-medium">
+                    Estado <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                    onValueChange={value => form.setValue("idEstado", value as "0" | "1")}
+                    value={form.watch("idEstado")}
+                    >
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecciona el estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="1">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            Activo
                         </div>
-
-                        {/* Columna Derecha */}
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-4 items-center gap-4 py-3">
-                                <Label htmlFor="nombreProducto" className="text-right">
-                                    Nombre
-                                </Label>
-                                <Input
-                                    id="nombreProducto"
-                                    {...form.register("nombreProducto")}
-                                    className="col-span-2"
-                                />
-                                <p className="text-red-500 text-center text-xs col-span-4">{form.formState.errors.nombreProducto?.message}</p>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4 py-3">
-                                <Label htmlFor="precio" className="text-right">
-                                    Precio
-                                </Label>
-                                <Input
-                                    id="precio"
-                                    type="number"
-                                    step="0.01"
-                                    {...form.register("precio", { valueAsNumber: true })}
-                                    className="col-span-2"
-                                />
-                                <p className="text-red-500 text-center text-xs col-span-4">{form.formState.errors.precio?.message}</p>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="descripcion" className="text-right">
-                                    Descripción
-                                </Label>
-                                <Textarea
-                                    id="descripcion"
-                                    {...form.register("descripcion")}
-                                    className="col-span-3"
-                                    placeholder="Una breve descripción del producto..."
-                                />
-                                <p className="text-red-500 text-center text-xs col-span-4">{form.formState.errors.descripcion?.message}</p>
-                            </div>
+                        </SelectItem>
+                        <SelectItem value="0">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                            Inactivo
                         </div>
+                        </SelectItem>
+                    </SelectContent>
+                    </Select>
+                    {form.formState.errors.idEstado && (
+                    <p className="text-red-500 text-sm">
+                        {form.formState.errors.idEstado.message}
+                    </p>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="descripcion" className="text-sm font-medium">
+                    Descripción
+                    </Label>
+                    <Textarea
+                    id="descripcion"
+                    {...form.register("descripcion")}
+                    placeholder="Ingrese una descripción detallada del producto..."
+                    className="w-full min-h-[100px] resize-none"
+                    />
+                    {form.formState.errors.descripcion && (
+                    <p className="text-red-500 text-sm">
+                        {form.formState.errors.descripcion.message}
+                    </p>
+                    )}
+                </div>
+                </div>
+
+                {/* Columna Derecha - Precios e Inventario */}
+                <div className="space-y-6">
+                <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-foreground border-b pb-2">
+                    Precios e Inventario
+                    </h3>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="precio" className="text-sm font-medium">
+                    Precio <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                        $
+                    </span>
+                    <Input
+                        id="precio"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        {...form.register("precio", { valueAsNumber: true })}
+                        className="w-full pl-8"
+                        placeholder="0.00"
+                    />
+                    </div>
+                    {form.formState.errors.precio && (
+                    <p className="text-red-500 text-sm">
+                        {form.formState.errors.precio.message}
+                    </p>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="unidadMedida" className="text-sm font-medium">
+                    Unidad de Medida <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                    id="unidadMedida"
+                    {...form.register("unidadMedida")}
+                    placeholder="Ej: kg, pieza, caja, litro"
+                    className="w-full"
+                    />
+                    {form.formState.errors.unidadMedida && (
+                    <p className="text-red-500 text-sm">
+                        {form.formState.errors.unidadMedida.message}
+                    </p>
+                    )}
+                </div>
+
+                <div className="space-y-4">
+                    <h4 className="text-md font-medium text-foreground">Gestión de Stock</h4>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="stockActual" className="text-sm font-medium">
+                        Stock Actual <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                        id="stockActual"
+                        type="number"
+                        min="0"
+                        {...form.register("stockActual", { valueAsNumber: true })}
+                        className="w-full"
+                        placeholder="0"
+                        />
+                        {form.formState.errors.stockActual && (
+                        <p className="text-red-500 text-sm">
+                            {form.formState.errors.stockActual.message}
+                        </p>
+                        )}
                     </div>
 
-                    <DialogFooter>
-                        <Button type="submit">Guardar Producto</Button>
-                    </DialogFooter>
-                </form>
-                </DialogContent>
-            )}
+                    <div className="space-y-2">
+                        <Label htmlFor="stockMinimo" className="text-sm font-medium">
+                        Stock Mínimo <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                        id="stockMinimo"
+                        type="number"
+                        min="0"
+                        {...form.register("stockMinimo", { valueAsNumber: true })}
+                        className="w-full"
+                        placeholder="0"
+                        />
+                        {form.formState.errors.stockMinimo && (
+                        <p className="text-red-500 text-sm">
+                            {form.formState.errors.stockMinimo.message}
+                        </p>
+                        )}
+                    </div>
+                    </div>
+
+                    <div className="space-y-2">
+                    <Label htmlFor="stockMaximo" className="text-sm font-medium">
+                        Stock Máximo <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                        id="stockMaximo"
+                        type="number"
+                        min="0"
+                        {...form.register("stockMaximo", { valueAsNumber: true })}
+                        className="w-full"
+                        placeholder="0"
+                    />
+                    {form.formState.errors.stockMaximo && (
+                        <p className="text-red-500 text-sm">
+                        {form.formState.errors.stockMaximo.message}
+                        </p>
+                    )}
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <DialogFooter className="pt-6 border-t">
+                <div className="flex flex-col-reverse sm:flex-row gap-3 w-full sm:w-auto">
+                <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={()=>onOpenChange(false)}>
+                    Cancelar
+                </Button>
+                <Button type="submit" className="w-full sm:w-auto">
+                    <span className="flex items-center gap-2">
+                    Guardar Producto
+                    </span>
+                </Button>
+                </div>
+            </DialogFooter>
+            </form>
+        </DialogContent>
+        )}
+
 
             {estado==="cargando"&& (
                 <DialogContent className="sm:max-w-4xl">
