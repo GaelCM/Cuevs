@@ -1,8 +1,9 @@
-import { getCategoriasLocal } from "@/api/categoriasLocal/categoriasLocal";
+import { deleteCategoria, getCategoriasLocal } from "@/api/categoriasLocal/categoriasLocal";
 import type { Categorias } from "@/types/Productos";
 import { useEffect, useState } from "react";
 import NuevaCategoriaSection from "./components/NuevaCategoriaSection";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 export default function CategoriasPage() {
     const [categorias, setCategorias] = useState<Categorias[]>([]);
@@ -26,9 +27,15 @@ export default function CategoriasPage() {
         navigate(`/categorias/editCategoria?id=${idCategoria}`);
     };
 
-    const handleEliminar = (idCategoria: number) => {
-        // Implementa la lógica de eliminación aquí
-        alert(`Eliminar categoría ${idCategoria}`);
+    const handleEliminar = async (idCategoria: number) => {
+       const res=await deleteCategoria(idCategoria);
+       if(!res?.success){
+            toast.error(res?.message || "Error al eliminar la categoría");
+            return;
+       }
+        toast.success("Categoría eliminada correctamente");
+        // Actualizar la lista de categorías después de eliminar
+        setCategorias(categorias.filter(categoria => categoria.idCategoria !== idCategoria));
     };
 
     return (
@@ -49,7 +56,7 @@ export default function CategoriasPage() {
 
                             <div
                                 className="bg-gray-100 rounded-xl shadow-md p-6 w-56 h-48 flex flex-col items-center justify-center transition-transform duration-300 hover:scale-105 hover:bg-red-100 cursor-pointer relative group"
-                                onClick={() => navigate(`/categorias/editCategoria?id=${categoria.idCategoria}`)}
+                                onClick={() => navigate(`/productos/productosXcategoria?id=${categoria.idCategoria}`)}
                             >
                                 <figure className="flex flex-col items-center">
                                     <div

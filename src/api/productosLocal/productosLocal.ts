@@ -63,3 +63,13 @@ export const eliminarProducto= async (idProducto:string) => {
     return res 
   }
 }
+
+
+export const getProductosXCategoria = async (idCategoria:number): Promise<Producto[]|null> => {
+  if (isClient && window.electronApi?.getProductosXCategoria) {
+    const res = await window.electronApi.getProductosXCategoria(idCategoria);
+    return res as Producto[];
+  }
+  return null;
+}
+

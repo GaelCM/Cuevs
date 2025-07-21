@@ -19,6 +19,7 @@ function registerVentasController() {
                 cambioVenta=pago - totalVenta
             }
       
+        
         const insertVenta = db.prepare(`
           INSERT INTO ventas (fechaVenta, totalVenta, idUsuario, idStatusVenta, pagoVenta, cambioVenta)
           VALUES (?, ?, ?, ?, ?, ?)
@@ -30,8 +31,32 @@ function registerVentasController() {
           INSERT INTO detalleVentas (idVenta, idProducto, cantidadProducto, precioUnitario, subtotal)
           VALUES (?, ?, ?, ?, ?)
         `); // aqui se prepara la consulta para insertar los detalles de la venta en la tabla detalleVentas 
+
+        // Nuevas consultas para gestión de stock
+        const getStock = db.prepare('SELECT stockActual, nombreProducto FROM productos WHERE idProducto = ?'); // aqui se prepara la consulta para obtener el stock actual de un producto
+        const updateStock = db.prepare('UPDATE productos SET stockActual = ? WHERE idProducto = ?');// aqui se prepara la consulta para actualizar el stock de un producto
+        const insertMovimiento = db.prepare(` 
+          INSERT INTO movimientosInventario (idProducto, tipoMovimiento, cantidad, stockAnterior, stockNuevo, fechaMovimiento, motivo, idUsuario, referencia)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `); // aqui se prepara la consulta para insertar un movimiento de inventario
       
         const transact = db.transaction(() => {
+
+          // 1. Verificar stock disponible antes de procesar la venta
+          for (const producto of productos) {
+              const productInfo = getStock.get(producto.product.idProducto);
+              
+              if (!productInfo) {
+                  throw new Error(`Producto con ID ${producto.product.idProducto} no encontrado`);
+              }
+              
+              if (productInfo.stockActual < producto.quantity) {
+                  throw new Error(
+                      `Stock insuficiente para el producto "${productInfo.nombreProducto || 'ID: ' + producto.product.idProducto}". 
+                      Stock disponible: ${productInfo.stockActual}, Cantidad solicitada: ${producto.quantity}`
+                  );
+              }
+          }
 
           insertVenta.run(fechaFormateada, totalVenta, idUsuario, status, pago, cambioVenta);
           const { idVenta } = getLastId.get();
@@ -45,6 +70,30 @@ function registerVentasController() {
               producto.product.precio,
               subtotal
             );
+
+            // Obtener stock actual y calcular nuevo stock
+            const productInfo = getStock.get(producto.product.idProducto);
+
+            const stockAnterior = productInfo.stockActual;
+
+            const stockNuevo = stockAnterior - producto.quantity;
+
+            // Actualizar stock del producto
+            updateStock.run(stockNuevo, producto.product.idProducto);
+
+            // Registrar el movimiento de inventario
+            insertMovimiento.run(
+                producto.product.idProducto,
+                'salida',
+                producto.quantity,
+                stockAnterior,
+                stockNuevo,
+                fechaFormateada,
+                'Venta del producto',
+                idUsuario,
+                `VENTA-${idVenta}`
+            );
+
           }
       
           return idVenta;

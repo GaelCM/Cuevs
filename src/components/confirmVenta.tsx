@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { nuevaVenta } from "@/api/ventasLocal/ventasLocal";
+import { useUserData } from "@/hooks/globalUser";
 
 
 type DialogConfirmProps ={
@@ -17,7 +18,8 @@ type DialogConfirmProps ={
 
 export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirmProps) {
 
-    const {carrito,getTotalPrice,clearCart}=useListaProductos()
+    const {carrito,getTotalPrice,clearCart}=useListaProductos();
+    const {user}=useUserData();
     //const router=useRouter();
     const [cambioEfectivo, setCambioEfectivo] = useState(0); // Estado para manejar el cambio
     const [folio,setFolio]=useState(0) // Estado para manejar el folio de la venta
@@ -40,7 +42,7 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
         }
         
         setEstadoVenta("cargando"); // Iniciar loading
-        const res=await nuevaVenta(getTotalPrice(),1,1,carrito,cambioEfectivo)
+        const res=await nuevaVenta(getTotalPrice(),user.idUsuario,1,carrito,cambioEfectivo)
 
         if(!res){
             console.log("Error al crear la venta")

@@ -165,6 +165,13 @@ function registerProductosController() {
     });
     
     
+    ipcMain.handle('get-productos-x-categoria', (event, idCategoria) => {
+        const stmt = db.prepare('SELECT * FROM productos WHERE idCategoria = ?');
+        const res = stmt.all(idCategoria);
+        return res;
+    });
+     
+
 }
 
 export { registerProductosController };

@@ -11,6 +11,7 @@ import Login from "./auth/Login/page";
 import UsuariosPage from "./pages/Usuarios/Usuarios";
 import CategoriasPage from "./pages/Categorias/Categorias";
 import EditCategoriasPage from "./pages/EditCategorias/EditCategorias";
+import ProductosXCategoriaPage from "./pages/Categorias/productosXcategoria/ProductosXcategoria";
 
 export const routes = createHashRouter([
   {
@@ -39,6 +40,10 @@ export const routes = createHashRouter([
           {
             path: "/categorias/editCategoria",
             element: <EditCategoriasPage />,
+          },
+          {
+            path: "/productos/productosXcategoria",
+            element: <ProductosXCategoriaPage />,
           },
           {
             path: "/productos/detalleProducto",

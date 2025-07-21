@@ -34,12 +34,15 @@ declare global {
         insertarProducto: (producto: Producto, idUsuario:number) => Promise<ProductoResponse>;
         updateProducto: (producto: Producto, idUsuario:number) => Promise<ProductoResponse>;
         deleteProducto: (id: string) => Promise<{success:boolean, message:string}>;
+        getProductosXCategoria: (idCategoria: number) => Promise<Producto[]>;
         ///////////////////////////////
         nuevaVenta: (totalVenta: number, idUsuario: number, status: number, productos: ProductoItem[], pago:number) => Promise<VentaResponse>;
         ///////////////////////////////
         getCategorias: () => Promise<Categorias[]>;
         insertarCategoria: (categoria: Categorias) => Promise<{success:boolean, message:string}>;
         getCategoriaById: (idCategoria: number) => Promise<Categorias>;
+        //updateCategoria: (categoria: Categorias) => Promise<{success:boolean, message:string}>;
+        deleteCategoria: (idCategoria: number) => Promise<{success:boolean, message:string}>;
         ///////////////////////////////
         reporteVentas: (fechaDesde: string, fechaHasta: string) => Promise<Venta[]>;
         detalleVenta: (idVenta: string) => Promise<DetalleVenta[]>;
