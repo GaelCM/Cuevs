@@ -1,5 +1,6 @@
 import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
 import type { Categorias, Producto, ProductoItem, ProductoResponse } from "@/types/Productos";
+import type { Proveedor } from "@/types/proveedores";
 import type { Notes } from "@/types/test";
 import type { Usuario, UsuarioPublico } from "@/types/Usuarios";
 import type { DetalleVenta, Venta, VentaResponse } from "@/types/ventas";
@@ -41,7 +42,7 @@ declare global {
         getCategorias: () => Promise<Categorias[]>;
         insertarCategoria: (categoria: Categorias) => Promise<{success:boolean, message:string}>;
         getCategoriaById: (idCategoria: number) => Promise<Categorias>;
-        //updateCategoria: (categoria: Categorias) => Promise<{success:boolean, message:string}>;
+        updateCategoria: (categoria: Categorias) => Promise<{success:boolean, message:string}>;
         deleteCategoria: (idCategoria: number) => Promise<{success:boolean, message:string}>;
         ///////////////////////////////
         reporteVentas: (fechaDesde: string, fechaHasta: string) => Promise<Venta[]>;
@@ -56,6 +57,13 @@ declare global {
         ///////////////////////////////
         insertarUsuario:(usuario:Usuario)=>Promise<{success:boolean,message: string,data: string}>
         obtenerUsuariosPublicos:()=>Promise<UsuarioPublico[]>;
+
+        ///////////////////////////////
+        getProveedores: () => Promise<Proveedor[]>;
+        getProveedorById: (idProveedor: number) => Promise<Proveedor>;
+        addProveedor: (proveedor: Proveedor) => Promise<{success:boolean, message:string}>;
+        updateProveedor: (proveedor: Proveedor) => Promise<{success:boolean, message:string}>;
+        deleteProveedor: (idProveedor: number) => Promise<{success:boolean, message:string}>;
       };
     }
   }

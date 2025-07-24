@@ -1,4 +1,4 @@
-import { getCategoriaById} from "@/api/categoriasLocal/categoriasLocal";
+import { getCategoriaById, updateCategoria} from "@/api/categoriasLocal/categoriasLocal";
 import { useEffect} from "react";
 import { useNavigate, useSearchParams} from "react-router";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 
 const categoriaSchema = z.object({
@@ -46,7 +47,13 @@ export default function EditCategoriasPage() {
     }, [idCategoria, form]);
 
     const onSubmit = async (values: z.infer<typeof categoriaSchema>) => {
-       console.log("Valores del formulario:", values);
+       const res=await updateCategoria(values)
+       if(!res?.success){
+            toast.error("Error al actualizar la categoría: " + res?.message);
+       }else{
+            toast.success("Categoría actualizada correctamente");
+            navigate("/categorias");
+       }
     };
 
     return (
@@ -75,6 +82,7 @@ export default function EditCategoriasPage() {
                         <Input
                             type="number"
                             id="idCategoria"
+                            disabled
                             {...form.register("idCategoria", { valueAsNumber: true })}
                             className="mt-1"
                         />

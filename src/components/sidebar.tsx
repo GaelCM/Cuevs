@@ -10,6 +10,7 @@ export default function Sidebar(){
    const [openReportes, setOpenReportes] = useState(false);
 
    const links = [
+      
       {
         name: 'Dashboard', href: '/dashboard',
         icon: (isValid:boolean)=> <svg className={`w-6 h-6 ${isValid?'text-white':'text-gray-500'} flex-shrink-0 group-hover:text-white transition duration-75`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -22,11 +23,27 @@ export default function Sidebar(){
         <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd"></path>
          </svg> 
       },
+      {
+        name: 'Compras', href: '/compras',
+        icon: (isValid:boolean) => (
+          <svg className={`w-6 h-6 ${isValid ? 'text-white' : 'text-gray-500'} flex-shrink-0 group-hover:text-white transition duration-75`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 6V4a4 4 0 00-8 0v2H4a1 1 0 000 2h1l1.68 8.39A2 2 0 008.62 18h2.76a2 2 0 001.94-1.61L15 8h1a1 1 0 100-2h-1zM8 4a2 2 0 114 0v2H8V4zm2 12a1 1 0 01-1-.78L7.22 8h5.56l-1.78 7.22A1 1 0 0110 16z" />
+          </svg>
+        )
+      },
       { name: 'Categorias', href: '/categorias', 
         icon: (isValid:boolean)=>
         <svg className={`w-6 h-6 ${isValid?'text-white':'text-gray-500'} flex-shrink-0 group-hover:text-white transition duration-75`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
          <path d="M17.707 9.293l-7-7A1 1 0 009 2H3a1 1 0 00-1 1v6a1 1 0 00.293.707l7 7a1 1 0 001.414 0l7-7a1 1 0 000-1.414zM5 7a2 2 0 114 0 2 2 0 01-4 0z"/>
         </svg>
+      },
+      {
+        name: 'Proveedores', href: '/proveedores',
+        icon: (isValid:boolean) => (
+          <svg className={`w-6 h-6 ${isValid ? 'text-white' : 'text-gray-500'} flex-shrink-0 group-hover:text-white transition duration-75`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2a4 4 0 100 8 4 4 0 000-8zm0 10c-4 0-7 2-7 4v2a1 1 0 001 1h12a1 1 0 001-1v-2c0-2-3-4-7-4zm7.5-2a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm-1.5 2c.69 0 1.37.07 2 .2V16a1 1 0 01-1 1h-3.28c.18-.31.28-.65.28-1v-2c0-.34-.04-.67-.12-.99C15.13 13.07 15.81 13 16.5 13z" />
+          </svg>
+        )
       },
       { name: 'Usuarios', href: '/usuarios', 
       icon: (isValid:boolean)=> <svg className={`w-6 h-6 ${isValid?'text-white':'text-gray-500'} flex-shrink-0 group-hover:text-white transition duration-75`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

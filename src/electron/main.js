@@ -8,6 +8,7 @@ import { registerTestController } from './controllers/testController.js';
 import { authenticationController } from './controllers/authenticationController.js';
 import { registerDashboardController } from './controllers/dashboardController.js';
 import {registerUsuariosController} from './controllers/usuariosController.js';
+import { registerProveedoresController } from './controllers/proveedoresController.js';
 
 
 function createWindow() {
@@ -46,6 +47,7 @@ app.whenReady().then(() => {
     registerCategoriasController();
     registerVentasController();
     registerUsuariosController();
+    registerProveedoresController();
 
 
     app.on('activate', function () {

@@ -12,6 +12,8 @@ import UsuariosPage from "./pages/Usuarios/Usuarios";
 import CategoriasPage from "./pages/Categorias/Categorias";
 import EditCategoriasPage from "./pages/EditCategorias/EditCategorias";
 import ProductosXCategoriaPage from "./pages/Categorias/productosXcategoria/ProductosXcategoria";
+import ComprasPage from "./pages/Compras/Compras";
+import ProveedoresPage from "./pages/Proveedores/Proveedores";
 
 export const routes = createHashRouter([
   {
@@ -34,6 +36,10 @@ export const routes = createHashRouter([
             element: <ProductosPage />,
           },
           {
+            path: "/compras",
+            element:<ComprasPage/>
+          },
+          {
             path: "/categorias",
             element: <CategoriasPage/>,
           },
@@ -48,6 +54,10 @@ export const routes = createHashRouter([
           {
             path: "/productos/detalleProducto",
             element: <ProductoDetailPage />,
+          },
+          {
+            path: "/proveedores",
+            element: <ProveedoresPage />,
           },
           {
             path: "/usuarios",

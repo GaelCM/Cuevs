@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld('electronApi', {
     getCategorias: () => ipcRenderer.invoke('get-categorias'),
     insertarCategoria: (categoria) => ipcRenderer.invoke('insertar-categoria', categoria),
     getCategoriaById: (idCategoria) => ipcRenderer.invoke('get-categoria-by-id', idCategoria),
-    //updateCategoria: (categoria) => ipcRenderer.invoke('update-categoria', categoria),
+    updateCategoria: (categoria) => ipcRenderer.invoke('update-categoria', categoria),
     deleteCategoria: (idCategoria) => ipcRenderer.invoke('delete-categoria', idCategoria),
     ///////////////////////////////
     reporteVentas: (fechaDesde, fechaHasta) => ipcRenderer.invoke('reporte-ventas', fechaDesde, fechaHasta),
@@ -33,5 +33,12 @@ contextBridge.exposeInMainWorld('electronApi', {
     ///////////////////////////////
     obtenerUsuariosPublicos:()=>ipcRenderer.invoke('get-usuarios'),
     insertarUsuario: (usuario) => ipcRenderer.invoke('insertar-usuario', usuario),
+
+    ///////////////////////////
+    getProveedores: () => ipcRenderer.invoke('get-proveedores'),
+    getProveedorById: (idProveedor) => ipcRenderer.invoke('get-proveedor-by-id', idProveedor),
+    addProveedor: (proveedor) => ipcRenderer.invoke('add-proveedor', proveedor),
+    updateProveedor: (proveedor) => ipcRenderer.invoke('update-proveedor', proveedor),
+    deleteProveedor: (idProveedor) => ipcRenderer.invoke('delete-proveedor', idProveedor)
   
   });

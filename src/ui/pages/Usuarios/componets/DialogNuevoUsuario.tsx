@@ -46,7 +46,7 @@ export function DialogNuevoUsuario({ open, onOpenChange }: dialogProps) {
     setEstado("cargando");
     const password_hash = await bcrypt.hash(values.password, 10);
     const res=await insertarNuevoUsuario({
-      id: 0, // Este campo será autogenerado por la base de datos
+      idUsuario: 0, // Este campo será autogenerado por la base de datos
       usuario: values.usuario,
       password_hash: password_hash,
       email: values.email,

@@ -34,7 +34,14 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
 
     const generarNuevaVenta=async()=>{
 
-        if(carrito.length===0){
+        if(carrito.length===0 || cambioEfectivo<getTotalPrice()){
+            if(cambioEfectivo<getTotalPrice()){
+                toast.error('EL CAMBIO ES INSUFICIENTE', {
+                    description: 'Asegúrate de ingresar un monto mayor o igual al total de la venta.',
+                });
+                onOpenChange(!isOpen) // Cerrar el diálogo si no hay productos en el carrito
+                return;
+            }
             onOpenChange(!isOpen) // Cerrar el diálogo si no hay productos en el carrito
             toast.error('NO HAY PRODUCTOS EN LA VENTA', {
                 description: 'Agrega productos al carrito antes de confirmar la venta.',})

@@ -45,6 +45,21 @@ export const getCategoriaById = async (idCategoria: number): Promise<Categorias|
   }
 }
 
+export const updateCategoria = async (categoria: Categorias): Promise<{success:boolean, message:string}|null> => {
+  if (window.electronApi?.updateCategoria) {
+        const res = await window.electronApi.updateCategoria(categoria);
+        if (!res) {
+          console.log("Categoria no encontrada:", res);
+          return null
+        }
+        return res as {success:boolean, message:string};
+  } else {
+        console.warn("electronAPI no está disponible.");
+        return null;
+  }
+}
+
+
 export const deleteCategoria = async (idCategoria: number): Promise<{success:boolean, message:string}|null> => {
   if (window.electronApi?.deleteCategoria) {
         const res = await window.electronApi.deleteCategoria(idCategoria);
