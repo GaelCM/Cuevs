@@ -1,15 +1,19 @@
-import { getProveedores } from "@/api/proveedores/proveedoresLocal"
+import { deleteProveedor, getProveedores } from "@/api/proveedores/proveedoresLocal"
 import type { Proveedor } from "@/types/proveedores";
 import { useEffect, useState } from "react"
 import NuevoProveedorSection from "./components/NuevoProvedorSection";
-import { Search } from "lucide-react";
+import { Search, Pencil, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 
 export default function ProveedoresPage(){
     const [proveedores, setProveedores] = useState<Proveedor[]>([]);
     const [busqueda, setBusqueda] = useState("");
+    const [openConfirm, setOpenConfirm] = useState(false);
 
     useEffect(()=>{
         getProveedores().
@@ -24,6 +28,19 @@ export default function ProveedoresPage(){
     const proveedoresFiltrados = proveedores.filter((proveedor) =>
         proveedor.nombreProveedor.toLowerCase().includes(busqueda.toLowerCase())
     );
+
+    const eliminarProveedor = async(id: number) => {
+        const response=await deleteProveedor(id)
+        if(!response?.success){
+            toast.error('Error al eliminar el proveedor', {
+                description: `${response?.message}`,
+            });
+            return;
+        }else{
+            toast.success('Proveedor eliminado correctamente');
+            setProveedores(proveedoresFiltrados.filter((p) => p.idProveedor !== id));
+        }
+    }
 
     return(
         <div className="px-15 py-5 bg-white flex flex-col">
@@ -65,14 +82,60 @@ export default function ProveedoresPage(){
                         {proveedor.direccion && (
                             <div className="text-gray-700"><span className="font-semibold">Dirección:</span> {proveedor.direccion}</div>
                         )}
-                        <div className="mt-2">
+                        <div className="mt-2 flex items-center gap-2">
                             <Badge className={`${proveedor.idEstado ==1 ? 'bg-green-700':'bg-gray-500'}`}>
                                 Estado: {proveedor.idEstado ==1 ? 'Activo':'Inactivo'}
                             </Badge>
+                            <button
+                                className="ml-auto p-2 rounded hover:bg-gray-100 transition-colors"
+                                title="Editar proveedor"
+                                // onClick={() => handleEdit(proveedor.idProveedor)}
+                            >
+                                <Pencil className="w-5 h-5 text-blue-600" />
+                            </button>
+                            <button
+                                className="p-2 rounded hover:bg-gray-100 transition-colors"
+                                title="Eliminar proveedor"
+                                onClick={() => {
+                                    if (proveedor.idProveedor !== undefined) {
+                                        setOpenConfirm(true);
+                                    }
+                                }}
+                            >
+                                <Trash2 className="w-5 h-5 text-red-600" />
+                            </button>
                         </div>
+                        <Dialog open={openConfirm} onOpenChange={setOpenConfirm} >
+                            <DialogContent className="bg-white"> 
+                                <DialogHeader>
+                                    <DialogTitle>¿Eliminar producto?</DialogTitle>
+                                    <DialogDescription>
+                                        ¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setOpenConfirm(false)}>
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={async () => {
+                                            if (proveedor.idProveedor !== undefined) {
+                                                await eliminarProveedor(proveedor.idProveedor);
+                                                setOpenConfirm(false);
+                                            }
+                                        }}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
+                    
                 ))}
             </section>
+            
         </div>
     )
 }

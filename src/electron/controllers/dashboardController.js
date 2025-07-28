@@ -11,7 +11,7 @@ function registerDashboardController(){
                 SUM(totalVenta) as monto_total_ventas, 
                 COUNT(*) as numero_ventas 
             FROM ventas 
-            WHERE DATE(fechaVenta) BETWEEN '2025-07-09' AND '2025-07-09' 
+            WHERE DATE(fechaVenta) BETWEEN date('NOW') AND date('NOW') 
             GROUP BY DATE(fechaVenta) 
             ORDER BY fecha;
         `);
@@ -25,7 +25,7 @@ function registerDashboardController(){
             JOIN productos p ON dv.idProducto = p.idProducto 
             JOIN ventas v ON dv.idVenta = v.idVenta 
             WHERE DATE(v.fechaVenta) 
-            BETWEEN '2025-07-09' AND '2025-07-09' 
+            BETWEEN date('NOW') AND date('NOW') 
             GROUP BY p.idProducto, p.nombreProducto 
             ORDER BY total_vendido DESC LIMIT 10;
         `);
@@ -38,7 +38,7 @@ function registerDashboardController(){
         const stmt = db.prepare(`
             SELECT CAST(strftime('%H', fechaVenta) AS INTEGER) as hora, COUNT(*) as numero_ventas, SUM(totalVenta) as total_ventas FROM ventas 
             WHERE DATE(fechaVenta) 
-            BETWEEN '2025-07-09' AND '2025-07-09' 
+            BETWEEN date('NOW') AND date('NOW') 
             GROUP BY CAST(strftime('%H', fechaVenta) AS INTEGER) 
             ORDER BY hora;
         `);
@@ -52,7 +52,7 @@ function registerDashboardController(){
             FROM detalleVentas dv JOIN productos p ON dv.idProducto = p.idProducto 
             JOIN categorias c ON p.idCategoria = c.idCategoria 
             JOIN ventas v ON dv.idVenta = v.idVenta WHERE DATE(v.fechaVenta) 
-            BETWEEN '2025-07-01' AND '2025-07-04' 
+            BETWEEN date('NOW') AND date('NOW') 
             GROUP BY c.idCategoria, c.categoriaName, p.idProducto, p.nombreProducto ) 
             SELECT categoriaName, nombreProducto, total_vendido FROM ProductosPorCategoria 
             WHERE rn = 1 

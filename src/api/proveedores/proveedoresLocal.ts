@@ -29,3 +29,13 @@ export const insertarProveedor = async (proveedor: Proveedor) => {
     }
 };
 
+export const deleteProveedor = async (id: number) => {
+    if (isClient && window.electronApi?.deleteProveedor) {
+        const res = await window.electronApi.deleteProveedor(id);
+        return res;
+    } else {
+        console.warn("electronAPI no está disponible para eliminar proveedor.");
+        return null;
+    }
+}
+
