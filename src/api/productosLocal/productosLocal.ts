@@ -19,6 +19,21 @@ export const getProducto = async (idProducto:string): Promise<Producto|null> => 
     }
   };
 
+
+export const getProductoForVenta = async (idProducto:string): Promise<Producto|null> => {
+    if (isClient && window.electronApi?.getProductoForVenta) {
+      const res = await window.electronApi.getProductoForVenta(idProducto);
+      if (!res) {
+        console.log("Producto no encontrado:", res);
+        return null
+      }
+      console.log("Producto encontrado:", res);
+      return res as Producto;
+    } else {
+      console.warn("electronAPI no está disponible.");
+      return null;
+    }
+  }; 
   
 export const getProductosLocal = async (): Promise<Producto[]|null> => {
   if (isClient && window.electronApi?.getProductos) {

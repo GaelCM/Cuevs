@@ -6,8 +6,7 @@ import { z } from "zod";
 import DialogProducto from "./DialogProducto";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getProducto } from "@/api/productosLocal/productosLocal";
-
+import {getProductoForVenta } from "@/api/productosLocal/productosLocal";
 
 
 const busquedaSchema = z.object({
@@ -30,7 +29,7 @@ export function Busqueda(){
     })
 
       const buscarProducto=async(values: z.infer<typeof busquedaSchema>)=>{
-        const res=await getProducto(values.producto)
+        const res=await getProductoForVenta(values.producto)
         if(res){
             setProducto(res)
             setOpen(true)

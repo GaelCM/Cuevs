@@ -32,6 +32,7 @@ declare global {
         ///////////////////////////////
         getProductos: () => Promise<Producto[]>;
         getProducto: (id:string) => Promise<Producto>;
+        getProductoForVenta: (id:string) => Promise<Producto>;
         insertarProducto: (producto: Producto, idUsuario:number) => Promise<ProductoResponse>;
         updateProducto: (producto: Producto, idUsuario:number) => Promise<ProductoResponse>;
         deleteProducto: (id: string) => Promise<{success:boolean, message:string}>;

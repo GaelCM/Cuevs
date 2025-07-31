@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Package } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -404,11 +405,14 @@ export function DialogNuevoProducto({open, onOpenChange}: dialogProps) {
                                     
                                 </DialogHeader>
                                 <div className="flex justify-center">
-                                    <a href={"/productos"} className="mt-6">
-                                        <Button>
+                                    <Link to={"/productos"} className="mt-6">
+                                        <Button onClick={()=>{
+                                            onOpenChange(false)
+                                            setEstado("inicio")  // Reiniciar estado al cerrar el diálogo
+                                        }}>
                                             Finalizar
                                         </Button>
-                                    </a>
+                                    </Link>
                                 </div>
                 </DialogContent>
             )}

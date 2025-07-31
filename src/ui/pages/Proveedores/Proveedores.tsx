@@ -14,7 +14,8 @@ export default function ProveedoresPage(){
     const [proveedores, setProveedores] = useState<Proveedor[]>([]);
     const [busqueda, setBusqueda] = useState("");
     const [openConfirm, setOpenConfirm] = useState(false);
-
+    const [proveedorSeleccionado, setProveedorSeleccionado] = useState<Proveedor | null>(null);
+    
     useEffect(()=>{
         getProveedores().
         then((proveedor)=>{
@@ -98,6 +99,7 @@ export default function ProveedoresPage(){
                                 title="Eliminar proveedor"
                                 onClick={() => {
                                     if (proveedor.idProveedor !== undefined) {
+                                        setProveedorSeleccionado(proveedor);
                                         setOpenConfirm(true);
                                     }
                                 }}
@@ -105,7 +107,12 @@ export default function ProveedoresPage(){
                                 <Trash2 className="w-5 h-5 text-red-600" />
                             </button>
                         </div>
-                        <Dialog open={openConfirm} onOpenChange={setOpenConfirm} >
+                        
+                    </div>
+          
+                ))}
+            </section>
+            <Dialog open={openConfirm} onOpenChange={setOpenConfirm} >
                             <DialogContent className="bg-white"> 
                                 <DialogHeader>
                                     <DialogTitle>¿Eliminar producto?</DialogTitle>
@@ -120,8 +127,8 @@ export default function ProveedoresPage(){
                                     <Button
                                         variant="destructive"
                                         onClick={async () => {
-                                            if (proveedor.idProveedor !== undefined) {
-                                                await eliminarProveedor(proveedor.idProveedor);
+                                            if (proveedorSeleccionado?.idProveedor !== undefined) {
+                                                await eliminarProveedor(proveedorSeleccionado.idProveedor);
                                                 setOpenConfirm(false);
                                             }
                                         }}
@@ -131,10 +138,6 @@ export default function ProveedoresPage(){
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
-                    </div>
-                    
-                ))}
-            </section>
             
         </div>
     )

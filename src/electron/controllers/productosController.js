@@ -17,6 +17,12 @@ function registerProductosController() {
         return res;
     });
 
+    ipcMain.handle('get-producto-for-venta', (event, id) => {
+        const stmt = db.prepare('SELECT * FROM productos WHERE idProducto = ? and idEstado = 1');
+        const res = stmt.get(id); // si esperas 1 resultado
+        return res;
+    });
+
     ipcMain.handle('insertar-producto', (event, producto, idUsuario) => {
     const stmtCheck = db.prepare('SELECT * FROM productos WHERE idProducto = ?');
     const productoExistente = stmtCheck.get(producto.idProducto);

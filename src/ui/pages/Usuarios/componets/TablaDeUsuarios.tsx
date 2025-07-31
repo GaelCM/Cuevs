@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { UsuarioPublico } from "@/types/Usuarios";
-import { Pencil, Search, Trash2 } from "lucide-react";
+import { Pencil, Search} from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ITEMS_PER_PAGE = 12;
@@ -105,16 +105,7 @@ export default function TablaDeUsuarios(){
                                             <Pencil className="h-4 w-4" />
                                         </Button>
 
-                                        <Button
-                                            size="icon"
-                                            variant="destructive"
-                                            onClick={() => {
-                                                //setusuarioAEliminar(usuario.usuario)
-                                                setOpenConfirm(true);
-                                            }}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
+                                        
                                     </div>
                                 </TableCell>
                             </TableRow>

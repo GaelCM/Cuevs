@@ -51,6 +51,17 @@ function registerProveedoresController() {
 
     // Eliminar proveedor
     ipcMain.handle('delete-proveedor', (event, idProveedor) => {
+
+        const stmtCheck = db.prepare('SELECT * FROM compras WHERE idProveedor = ?');
+        const comprasExistente = stmtCheck.get(idProveedor);
+        if (comprasExistente) {
+            return {
+                success: false,
+                message: 'El proveedor ya tiene compras asociadas y no se puede eliminar',
+                data: comprasExistente
+            };
+        }
+
         const stmt = db.prepare('DELETE FROM proveedores WHERE idProveedor = ?');
         const info = stmt.run(idProveedor);
         return {
