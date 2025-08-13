@@ -1,4 +1,5 @@
 import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
+import type { MovimientoInventarioPorDia, ProductoMayorRotacion, ProductoMenorRotacion, StockGeneral, StockPorCategoria } from "@/types/inventarioResponse";
 import type { Categorias, Producto, ProductoItem, ProductoResponse } from "@/types/Productos";
 import type { Proveedor } from "@/types/proveedores";
 import type { Notes } from "@/types/test";
@@ -65,6 +66,12 @@ declare global {
         addProveedor: (proveedor: Proveedor) => Promise<{success:boolean, message:string}>;
         updateProveedor: (proveedor: Proveedor) => Promise<{success:boolean, message:string}>;
         deleteProveedor: (idProveedor: number) => Promise<{success:boolean, message:string}>;
+        ////////////////////////////
+        obtenerDatosStockPorCategorias: () => Promise<StockPorCategoria[]>;
+        obtenerDatosStockGeneral: () => Promise<StockGeneral[]>;
+        productosConMayorRotacionPorMes: () => Promise<ProductoMayorRotacion[]>;
+        productosConMenorRotacionPorMes: () => Promise<ProductoMenorRotacion[]>;
+        movimientosInventarioPorDia:()=> Promise<MovimientoInventarioPorDia[]>;
       };
     }
   }

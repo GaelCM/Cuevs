@@ -1,7 +1,7 @@
 {
   "name": "cuevs-sistema-final",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "src/electron/main.js",
   "scripts": {

@@ -15,6 +15,7 @@ import ProductosXCategoriaPage from "./pages/Categorias/productosXcategoria/Prod
 import ComprasPage from "./pages/Compras/Compras";
 import ProveedoresPage from "./pages/Proveedores/Proveedores";
 import PerfilPages from "./pages/Perfil/Perfil";
+import InventarioPage from "./pages/Inventario/Inventario";
 
 export const routes = createHashRouter([
   {
@@ -71,6 +72,10 @@ export const routes = createHashRouter([
           {
             path: "/reportes/reportesVentas/detalleVenta",
             element: <ReporteVentasDetailPage />,
+          },
+          {
+            path: "/inventario",
+            element:<InventarioPage/>
           },
           {
             path: "/perfil",

@@ -40,6 +40,14 @@ contextBridge.exposeInMainWorld('electronApi', {
     getProveedorById: (idProveedor) => ipcRenderer.invoke('get-proveedor-by-id', idProveedor),
     addProveedor: (proveedor) => ipcRenderer.invoke('add-proveedor', proveedor),
     updateProveedor: (proveedor) => ipcRenderer.invoke('update-proveedor', proveedor),
-    deleteProveedor: (idProveedor) => ipcRenderer.invoke('delete-proveedor', idProveedor)
+    deleteProveedor: (idProveedor) => ipcRenderer.invoke('delete-proveedor', idProveedor),
+    ////////////////////////////
+    obtenerDatosStockPorCategorias: () => ipcRenderer.invoke('obtenerDatosStockPorCategorias'),
+    obtenerDatosStockGeneral: () => ipcRenderer.invoke('obtenerDatosStockGeneral'),
+    productosConMayorRotacionPorMes: () => ipcRenderer.invoke('productosConMayorRotacionPorMes'),
+    productosConMenorRotacionPorMes: () => ipcRenderer.invoke('productosConMenorRotacionPorMes'),
+    movimientosInventarioPorDia:()=> ipcRenderer.invoke('movimientosInventarioPorDia'),
+
+
   
   });

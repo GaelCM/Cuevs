@@ -9,6 +9,7 @@ import { authenticationController } from './controllers/authenticationController
 import { registerDashboardController } from './controllers/dashboardController.js';
 import {registerUsuariosController} from './controllers/usuariosController.js';
 import { registerProveedoresController } from './controllers/proveedoresController.js';
+import { registerInventarioController } from './controllers/inventarioController.js';
 
 
 function createWindow() {
@@ -26,15 +27,15 @@ function createWindow() {
 
     const isDev = process.env.NODE_ENV !== 'production';
 
-    if (isDev) {
+    /*if (isDev) {
         // En desarrollo, carga desde el servidor local de Vite/React
         mainWindow.loadURL('http://localhost:5173'); // Cambia el puerto si usas otro
     } else {
         // En producción, carga el archivo generado
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
-    }
+    }*/
    
-    //mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
+    mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
 }
 
 app.whenReady().then(() => {
@@ -48,7 +49,7 @@ app.whenReady().then(() => {
     registerVentasController();
     registerUsuariosController();
     registerProveedoresController();
-
+    registerInventarioController();
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

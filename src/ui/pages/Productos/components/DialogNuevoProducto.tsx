@@ -98,6 +98,7 @@ export function DialogNuevoProducto({open, onOpenChange}: dialogProps) {
         }else{
             console.log(response.data) // Maneja la respuesta según sea necesario
             setEstado("finalizado"); 
+            form.reset();
             toast.success('Producto registrado correctamente', {
                 description:`El producto se ha registrado correctamente`,})  
         }
