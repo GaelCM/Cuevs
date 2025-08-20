@@ -8,8 +8,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useListaProductos } from "@/hooks/listaProductos";
 import type { Producto } from "@/types/Productos";
-import { ArrowDown, ArrowUp, Pencil, Search, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, Search, ShoppingCart, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
@@ -18,7 +19,7 @@ import { toast } from "sonner";
 
 
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 30;
 
 export default function TablaDeProductos(){
     const [productos, setProductos] = useState<Producto[]>([]);
@@ -27,6 +28,8 @@ export default function TablaDeProductos(){
     const [currentPage, setCurrentPage] = useState(1);
     const [openConfirm, setOpenConfirm] = useState(false);
     const [productoAEliminar, setProductoAEliminar] = useState<string | null>(null);
+
+    const {addProduct}=useListaProductos();
 
     const obtenerProductos = async () => {
         const productos = await getProductosLocal();
@@ -149,6 +152,21 @@ export default function TablaDeProductos(){
                                             }}
                                         >
                                             <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant={"outline"}
+                                            size="icon"                                         
+                                            onClick={() => {
+                                                if(producto.stockActual>0&&producto.idEstado!==0){
+                                                addProduct(producto)
+                                                toast.success('Producto agregado al carrito')
+                                                }else{
+                                                    toast.error('No se puede agregar el producto al carrito', {
+                                                        description:`El producto está inactivo o no tiene stock suficiente`,})
+                                                }            
+                                            }}
+                                        >
+                                            <ShoppingCart className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </TableCell>

@@ -25,7 +25,7 @@ export function ListaProductos(){
 
         {carrito.length === 0 && (
           <div className="flex items-center justify-center h-96">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">No hay productoos en el carrito</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">No hay productos en el carrito</h1>
           </div>
         )}
 

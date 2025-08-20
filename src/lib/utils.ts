@@ -1,4 +1,5 @@
 import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
+import type { DetalleDeudorResponse, Deudores } from "@/types/deudores";
 import type { MovimientoInventarioPorDia, ProductoMayorRotacion, ProductoMenorRotacion, StockGeneral, StockPorCategoria } from "@/types/inventarioResponse";
 import type { Categorias, Producto, ProductoItem, ProductoResponse } from "@/types/Productos";
 import type { Proveedor } from "@/types/proveedores";
@@ -39,7 +40,7 @@ declare global {
         deleteProducto: (id: string) => Promise<{success:boolean, message:string}>;
         getProductosXCategoria: (idCategoria: number) => Promise<Producto[]>;
         ///////////////////////////////
-        nuevaVenta: (totalVenta: number, idUsuario: number, status: number, productos: ProductoItem[], pago:number) => Promise<VentaResponse>;
+        nuevaVenta: (totalVenta: number, idUsuario: number, tipoPago:number ,status: number, productos: ProductoItem[], pago:number) => Promise<VentaResponse>;
         ///////////////////////////////
         getCategorias: () => Promise<Categorias[]>;
         insertarCategoria: (categoria: Categorias) => Promise<{success:boolean, message:string}>;
@@ -72,6 +73,15 @@ declare global {
         productosConMayorRotacionPorMes: () => Promise<ProductoMayorRotacion[]>;
         productosConMenorRotacionPorMes: () => Promise<ProductoMenorRotacion[]>;
         movimientosInventarioPorDia:()=> Promise<MovimientoInventarioPorDia[]>;
+        ////////////////////////////
+        obtenerDeudores: () => Promise<Deudores[]>;
+        obtenerDetalleDeudor: (idDeudor: number) => Promise<DetalleDeudorResponse[]>;
+        insertarDeudor:(deudor:Deudores)=> Promise<{success:boolean, message:string, data: string}>;
+        insertarProductoDeudor:(idDeudor:number,producto:Producto,cantidad:number)=> Promise<{success:boolean, message:string, data: string}>;
+        obtenerDeudor:(idDeudor:number)=>Promise<DetalleDeudorResponse>;
+        eliminarDeudor:(idDeudor:number)=> Promise<{success:boolean, message:string}>;
+        eliminarProductoDeudor:(idDeudor:number,idProducto:string)=>Promise<{success:boolean, message:string}>;
+       
       };
     }
   }

@@ -81,7 +81,8 @@ db.prepare(`CREATE TABLE IF NOT EXISTS ventas (
   idUsuario INTEGER,
   idStatusVenta INTEGER,
   pagoVenta REAL,
-  cambioVenta REAL
+  cambioVenta REAL,
+  tipoPago INTEGER DEFAULT 1
 )`).run();
 
 // Tabla de Detalle de Ventas
@@ -136,5 +137,49 @@ db.prepare(`CREATE TABLE IF NOT EXISTS alertasStock (
   mensaje TEXT,
   leida INTEGER DEFAULT 0
 )`).run();
+
+// Tabla de Deudores
+db.prepare(`CREATE TABLE IF NOT EXISTS deudores (
+  idDeudor INTEGER PRIMARY KEY AUTOINCREMENT not null,
+  nombreDeudor text,
+  isActivo int not null,
+  fechaCreacion TEXT
+  )`).run();
+
+//tabla detalle de deudores
+db.prepare(`CREATE TABLE IF NOT EXISTS detalleDeudores (
+  idDeudor INTEGER not null,
+  idProducto text not null,
+  cantidad INTEGER not null,
+  precioUnitario REAL not null,
+  subtotal REAL not null
+  )`).run();
+
+
+db.prepare(`CREATE TABLE IF NOT EXISTS tipoPago(
+  idTipoPago INTEGER PRIMARY KEY not null,
+  tipoPago INTEGER not null
+  )`).run();
+  
+// Insertar tipos de pago
+try {
+  const tiposPago=[{id:0,tiposPago:"Efectivo"},{id:1,tiposPago:"Tarjeta"}];
+
+  const userCount = db.prepare('SELECT COUNT(*) as count FROM tipoPago').get().count;
+  if (userCount === 0) {
+
+    const stmt = db.prepare('INSERT INTO tipoPago (idTipoPago, tipoPago) VALUES (?, ?)');
+    
+    const insertMany = db.transaction((tipos) => {
+      for (const tipo of tipos) {
+        stmt.run(tipo.id, tipo.tiposPago);
+      }
+    });
+    // Ejecuta la transacción
+    insertMany(tiposPago);
+  }
+} catch (e) {
+  console.error('Error al crear los tipos de pago', e);
+}  
 
 export default db;

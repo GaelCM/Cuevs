@@ -16,7 +16,7 @@ const busquedaSchema = z.object({
 })
 
 
-export function Busqueda(){
+export function Busqueda({id}:{id?:number}){
   const [producto, setProducto] = React.useState<Producto | null>(null);
   const [open, setOpen] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -54,7 +54,7 @@ export function Busqueda(){
             <input type="text" autoFocus className='w-full px-3 py-2 rounded-md focus:outline-none focus:border-blue-500 text-black' placeholder="Ingrese el código del producto"  {...register('producto')}  />
             {errors.producto && <p className="text-red-500 text-sm">{errors.producto.message}</p>}   
         </form>
-        <DialogProducto isOpen={open} onOpenChange={setOpen} product={producto} ></DialogProducto>
+        <DialogProducto isOpen={open} onOpenChange={setOpen} product={producto} idDeudor={id} ></DialogProducto>
         </>
     )
 }

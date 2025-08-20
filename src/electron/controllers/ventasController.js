@@ -5,7 +5,7 @@ import { toZonedTime } from 'date-fns-tz';
 
 function registerVentasController() {
 
-    ipcMain.handle('nueva-venta', (event, totalVenta, idUsuario, status, productos, pago) => {
+    ipcMain.handle('nueva-venta', (event, totalVenta, idUsuario, tipoPago ,status, productos, pago) => {
     
         const timeZone = 'America/Mexico_City';
         const now = new Date();
@@ -21,8 +21,8 @@ function registerVentasController() {
       
         
         const insertVenta = db.prepare(`
-          INSERT INTO ventas (fechaVenta, totalVenta, idUsuario, idStatusVenta, pagoVenta, cambioVenta)
-          VALUES (?, ?, ?, ?, ?, ?)
+          INSERT INTO ventas (fechaVenta, totalVenta, idUsuario, tipoPago, idStatusVenta, pagoVenta, cambioVenta)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
         `); // aqui se prepara la consulta para insertar la venta en la tabla ventas
       
         const getLastId = db.prepare('SELECT last_insert_rowid() as idVenta'); // aqui se prepara la consulta para obtener el id de la venta
@@ -58,7 +58,7 @@ function registerVentasController() {
               }
           }
 
-          insertVenta.run(fechaFormateada, totalVenta, idUsuario, status, pago, cambioVenta);
+          insertVenta.run(fechaFormateada, totalVenta, idUsuario, tipoPago, status, pago, cambioVenta);
           const { idVenta } = getLastId.get();
       
           for (const producto of productos) {

@@ -18,8 +18,7 @@ import { Eye} from "lucide-react";
 import type { Venta } from "@/types/ventas";
 import { Link } from "react-router";
 
-const ITEMS_PER_PAGE = 10;
-
+const ITEMS_PER_PAGE = 20;
 
 
 

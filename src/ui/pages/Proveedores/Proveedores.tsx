@@ -115,9 +115,9 @@ export default function ProveedoresPage(){
             <Dialog open={openConfirm} onOpenChange={setOpenConfirm} >
                             <DialogContent className="bg-white"> 
                                 <DialogHeader>
-                                    <DialogTitle>¿Eliminar producto?</DialogTitle>
+                                    <DialogTitle>¿Eliminar proveedor?</DialogTitle>
                                     <DialogDescription>
-                                        ¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.
+                                        ¿Estás seguro de que deseas eliminar este proveedor? Esta acción no se puede deshacer.
                                     </DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
@@ -137,7 +137,7 @@ export default function ProveedoresPage(){
                                     </Button>
                                 </DialogFooter>
                             </DialogContent>
-                        </Dialog>
+            </Dialog>
             
         </div>
     )

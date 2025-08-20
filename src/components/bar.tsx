@@ -50,10 +50,12 @@ export default function Bar(){
                     
                   </div>
 
-                  <div className="space-y-6 pt-4">
-                     
-                     <img src={cartel} alt={""} height={500}></img>
-                                                                         
+                  <div className="space-y-6 pt-4">                     
+                     <img src={cartel} alt={""} height={500}></img>                                                               
+                  </div>
+
+                  <div className="mt-8 flex justify-center items-center">
+                     <a href="https://mi.redmultipagos.com.mx/catalogos_productos_responsivo.jsp" target="blank" className="flex justify-center items-center text-3xl h-20 w-full bg-yellow-400 hover:bg-yellow-600 text-black font-bold">Recargas</a>
                   </div>
 
                </div>

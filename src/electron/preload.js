@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('electronApi', {
     deleteProducto: (id) => ipcRenderer.invoke('delete-producto', id),
     getProductosXCategoria: (idCategoria) => ipcRenderer.invoke('get-productos-x-categoria',idCategoria),
     ///////////////////////////////
-    nuevaVenta: (totalVenta, idUsuario, status, productos, pago) => ipcRenderer.invoke('nueva-venta', totalVenta, idUsuario, status, productos, pago),
+    nuevaVenta: (totalVenta, idUsuario, tipoPago, status, productos, pago) => ipcRenderer.invoke('nueva-venta', totalVenta, idUsuario, tipoPago, status, productos, pago),
     ///////////////////////////////
     getCategorias: () => ipcRenderer.invoke('get-categorias'),
     insertarCategoria: (categoria) => ipcRenderer.invoke('insertar-categoria', categoria),
@@ -47,7 +47,14 @@ contextBridge.exposeInMainWorld('electronApi', {
     productosConMayorRotacionPorMes: () => ipcRenderer.invoke('productosConMayorRotacionPorMes'),
     productosConMenorRotacionPorMes: () => ipcRenderer.invoke('productosConMenorRotacionPorMes'),
     movimientosInventarioPorDia:()=> ipcRenderer.invoke('movimientosInventarioPorDia'),
-
-
-  
+    ////////////////////////////
+    obtenerDeudores: () => ipcRenderer.invoke('obtenerDeudores'),
+    obtenerDetalleDeudor:(idDeudor)=>ipcRenderer.invoke('obtenerDetalleDeudor',idDeudor),
+    obtenerDeudor:(idDeudor)=> ipcRenderer.invoke('obtenerDeudor',idDeudor),
+    insertarDeudor: (deudor) => ipcRenderer.invoke('insertarDeudor', deudor),
+    insertarProductoDeudor:(idDeudor,producto,cantidad)=>ipcRenderer.invoke('insertarProductoDeudor',idDeudor,producto,cantidad),
+    //updateDeudor: (deudor) => ipcRenderer.invoke('update-deudor', deudor),
+    eliminarDeudor: (idDeudor) => ipcRenderer.invoke('eliminarDeudor', idDeudor),
+    eliminarProductoDeudor:(idDeudor,idProducto)=>ipcRenderer.invoke('eliminarProductoDeudor',idDeudor,idProducto)
+    
   });

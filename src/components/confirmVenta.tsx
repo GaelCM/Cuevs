@@ -24,6 +24,7 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
     const [cambioEfectivo, setCambioEfectivo] = useState(0); // Estado para manejar el cambio
     const [folio,setFolio]=useState(0) // Estado para manejar el folio de la venta
     const [estadoVenta, setEstadoVenta] = useState<EstadoVenta>("inicio");
+    const [tipoPago, setTipoPago] = useState(0); // 0: efectivo, 1: tarjeta
 
     const reloadVenta=()=>{
         setEstadoVenta("inicio") // Reiniciar el estado de la venta
@@ -48,8 +49,8 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
             return
         }
         
-        setEstadoVenta("cargando"); // Iniciar loading
-        const res=await nuevaVenta(getTotalPrice(),user.idUsuario,1,carrito,cambioEfectivo)
+    setEstadoVenta("cargando"); // Iniciar loading
+    const res=await nuevaVenta(getTotalPrice(),user.idUsuario,tipoPago,1,carrito,cambioEfectivo)
 
         if(!res){
             console.log("Error al crear la venta")
@@ -78,6 +79,18 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
                 </DialogHeader>
                 <h1 className="text-4xl text-center">TOTAL DE LA VENTA:</h1>
                 <h1 className="text-6xl font-bold text-center">{formatCurrency(getTotalPrice())}</h1>
+
+                <div className="flex flex-col items-center gap-2">
+                    <label className="text-xl font-semibold">Tipo de pago:</label>
+                    <select
+                        className="text-2xl p-2 border rounded"
+                        value={tipoPago}
+                        onChange={e => setTipoPago(Number(e.target.value))}
+                    >
+                        <option value={0}>Efectivo</option>
+                        <option value={1}>Tarjeta</option>
+                    </select>
+                </div>
 
                 <h1 className="text-4xl text-center p-2">PAGÓ CON:</h1>
                 <div className="flex justify-center p-2">

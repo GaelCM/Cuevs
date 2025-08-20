@@ -5,10 +5,10 @@ import type { DetalleVenta, Venta } from "@/types/ventas";
 // Función helper para verificar si estamos en el cliente
 const isClient = typeof window !== 'undefined';
 
-export const nuevaVenta=async(totalVenta:number,idUsuario:number,status:number,productos:ProductoItem[],pago:number)=>{
+export const nuevaVenta=async(totalVenta:number,idUsuario:number,tipoPago:number,status:number,productos:ProductoItem[],pago:number)=>{
 
     if (isClient && window.electronApi?.nuevaVenta) {
-        const res = await window.electronApi.nuevaVenta(totalVenta,idUsuario,status,productos,pago);
+        const res = await window.electronApi.nuevaVenta(totalVenta,idUsuario,tipoPago,status,productos,pago);
         if (!res) {
           console.log("Error al crear la venta:", res);
           return null

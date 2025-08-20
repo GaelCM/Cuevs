@@ -10,6 +10,7 @@ import { registerDashboardController } from './controllers/dashboardController.j
 import {registerUsuariosController} from './controllers/usuariosController.js';
 import { registerProveedoresController } from './controllers/proveedoresController.js';
 import { registerInventarioController } from './controllers/inventarioController.js';
+import { deudoresController } from './controllers/deudoresController.js';
 
 
 function createWindow() {
@@ -50,6 +51,7 @@ app.whenReady().then(() => {
     registerUsuariosController();
     registerProveedoresController();
     registerInventarioController();
+    deudoresController();
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

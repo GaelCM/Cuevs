@@ -111,6 +111,11 @@ export default function Sidebar(){
                                Mis ventas
                              </Link>
                            </li>
+                           <li>
+                             <Link to="/deudores" className="block px-2 py-2 text-gray-700 hover:bg-red-500 hover:text-white rounded-lg">
+                               Acredores
+                             </Link>
+                           </li>
                          </ul>
                        )}
                      </li>
