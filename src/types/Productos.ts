@@ -28,3 +28,7 @@ export type ProductoResponse={
     message: string;
     data: Producto|null;
 }
+
+export type Numeros={
+    idNumero:number;
+}

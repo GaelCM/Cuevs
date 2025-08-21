@@ -1,12 +1,15 @@
 import { deleteCategoria, getCategoriasLocal } from "@/api/categoriasLocal/categoriasLocal";
-import type { Categorias } from "@/types/Productos";
+import type { Categorias} from "@/types/Productos";
 import { useEffect, useState } from "react";
 import NuevaCategoriaSection from "./components/NuevaCategoriaSection";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 export default function CategoriasPage() {
+
     const [categorias, setCategorias] = useState<Categorias[]>([]);
+
+
     const navigate = useNavigate();
 
     const obtenerCategorias = async () => {

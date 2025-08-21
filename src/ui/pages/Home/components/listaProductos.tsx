@@ -18,7 +18,7 @@ export function ListaProductos(){
         <div className="py-10">
         <Busqueda></Busqueda>
         </div>
-        <h2 className="text-xl text-center font-light text-gray-900 dark:text-white sm:text-2xl">Lista de productoos</h2>
+        <h2 className="text-xl text-center font-light text-gray-900 dark:text-white sm:text-2xl">Lista de productos</h2>
     </div>
     <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <div className="mx-auto w-full flex-none lg:w-[90%]">
