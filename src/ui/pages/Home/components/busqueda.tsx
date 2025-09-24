@@ -1,12 +1,13 @@
 
 
 import type { Producto } from "@/types/Productos";
-import React from "react";
+import React, { useImperativeHandle } from "react";
 import { z } from "zod";
 import DialogProducto from "./DialogProducto";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {getProductoForVenta } from "@/api/productosLocal/productosLocal";
+import { useListaProductos } from "@/hooks/listaProductos";
 
 
 const busquedaSchema = z.object({
@@ -16,10 +17,26 @@ const busquedaSchema = z.object({
 })
 
 
-export function Busqueda({id}:{id?:number}){
+export const Busqueda = React.forwardRef<{ focus: () => void }, {id?:number}>(({id}, ref) => {
+
+
   const [producto, setProducto] = React.useState<Producto | null>(null);
   const [open, setOpen] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      // Asegurarnos de que el input existe y está montado
+      if (inputRef.current) {
+        // Usar setTimeout para asegurar que el focus se aplique después del re-render
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
+      }
+    }
+  }));
+
+  const {addProduct}=useListaProductos();
 
     const {register, handleSubmit, reset, formState: { errors }} = useForm<z.infer<typeof busquedaSchema>>({
         resolver: zodResolver(busquedaSchema),
@@ -38,8 +55,12 @@ export function Busqueda({id}:{id?:number}){
       const buscarProducto=async(values: z.infer<typeof busquedaSchema>)=>{
         const res=await getProductoForVenta(values.producto)
         if(res){
+            addProduct(res)
             setProducto(res)
-            setOpen(true)
+            if(id){
+              setOpen(true)
+            }
+            //setOpen(true)
             reset() // Resetea el formulario después de buscar
             if(inputRef.current) {
                 inputRef.current.focus(); // Enfoca el input después de buscar
@@ -70,4 +91,4 @@ export function Busqueda({id}:{id?:number}){
         <DialogProducto isOpen={open} onOpenChange={setOpen} product={producto} idDeudor={id} ></DialogProducto>
         </>
     )
-}
+})

@@ -1,7 +1,7 @@
 {
   "name": "cuevs-sistema-final",
   "private": true,
-  "version": "0.1.1",
+  "version": "2.1.1",
   "type": "module",
   "main": "src/electron/main.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@tailwindcss/vite": "^4.1.11",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^12.2.0",

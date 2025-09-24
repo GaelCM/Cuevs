@@ -116,6 +116,15 @@ function registerVentasController() {
         }
       });
 
+    ipcMain.handle('reporte-total-ventas', (event,fechaDesde, fechaHasta) => {
+        const timeZone = 'America/Mexico_City';
+        const now = new Date();
+        const zonedDate = toZonedTime(now, timeZone);
+        const fechaHoy = format(zonedDate, 'yyyy-MM-dd');
+        const ventas = db.prepare('SELECT SUM(totalVenta) as total FROM ventas WHERE DATE(fechaVenta) BETWEEN ? AND ?').all(fechaDesde, fechaHasta);
+        return ventas; 
+    }); 
+
     ipcMain.handle('reporte-ventas', (event, fechaDesde, fechaHasta) => {
         const ventas = db.prepare('SELECT * FROM ventas WHERE DATE(fechaVenta) BETWEEN ? AND ?').all(fechaDesde, fechaHasta);
         return ventas; 

@@ -19,9 +19,23 @@ export const nuevaVenta=async(totalVenta:number,idUsuario:number,tipoPago:number
         console.warn("electronAPI no está disponible.");
         return null;
       }
-    
 }
 
+
+export const obtenerTotalVentasApi=async(fechaDesde:string,fechaHasta:string):Promise<[{total:number}]|null>=>{
+    if (isClient && window.electronApi?.reporteTotalVentas) {
+      const res = await window.electronApi.reporteTotalVentas(fechaDesde, fechaHasta);
+      if (!res) {
+        console.log("Error al obtener el total de ventas:", res);
+        return null
+      }
+      console.log("Total de ventas obtenido:", res);
+      return res
+    } else {
+      console.warn("electronAPI no está disponible.");
+      return null;
+    }
+}
 
 export const obtenerReporteVentas=async(fechaDesde:string,fechaHasta:string):Promise<Venta[] | null>=>{
   if (isClient && window.electronApi?.reporteVentas) {

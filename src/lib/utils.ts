@@ -1,3 +1,5 @@
+import type { compra } from "@/types/compras";
+import type { CorteCajaReporte, CorteDataCierre, CorteFinalResponse, CorteResponse, ResumenDiarioCorteReporte } from "@/types/cortesResponse";
 import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
 import type { DetalleDeudorResponse, Deudores } from "@/types/deudores";
 import type { MovimientoInventarioPorDia, ProductoMayorRotacion, ProductoMenorRotacion, StockGeneral, StockPorCategoria } from "@/types/inventarioResponse";
@@ -49,6 +51,7 @@ declare global {
         deleteCategoria: (idCategoria: number) => Promise<{success:boolean, message:string}>;
         ///////////////////////////////
         reporteVentas: (fechaDesde: string, fechaHasta: string) => Promise<Venta[]>;
+        reporteTotalVentas:(fechaDesde: string, fechaHasta: string)=>Promise<[{total:number}]>;
         detalleVenta: (idVenta: string) => Promise<DetalleVenta[]>;
         ///////////////////////////////
         login: (username: string, password: string) => Promise<{success:boolean, message:string, data:Usuario, token:string, path:string}>;
@@ -81,7 +84,17 @@ declare global {
         obtenerDeudor:(idDeudor:number)=>Promise<DetalleDeudorResponse>;
         eliminarDeudor:(idDeudor:number)=> Promise<{success:boolean, message:string}>;
         eliminarProductoDeudor:(idDeudor:number,idProducto:string)=>Promise<{success:boolean, message:string}>;
-       
+
+        ////////////////////////////
+        insertarCompra:(compra:compra)=>Promise<{success:boolean, message:string, data: string}>;
+        reporteTotalCompras:(fechaDesde: string, fechaHasta: string)=>Promise<[{total:number}]>;
+        obtenerCompras:(fechaDesde: string, fechaHasta: string)=>Promise<{success:boolean, message:string, data: compra[]}>;
+
+        ///////////////////////////7
+        insertarNuevoCorte:(idUsuario:number, montoInicialEfectivo:number)=>Promise<{success:boolean, message:string, data:CorteResponse}>;
+        cerrarCorte:(dataCierre:CorteDataCierre)=>Promise<{success:boolean, message:string, data:CorteFinalResponse}>;
+        detalleCortes:(fechaDesde: string, fechaHasta: string)=>Promise<{success:boolean, message:string, data:CorteCajaReporte[]}>;
+        resumenDiarioCortes:(fechaDesde: string, fechaHasta: string)=>Promise<{success:boolean, message:string, data:ResumenDiarioCorteReporte[]}>;
       };
     }
   }

@@ -55,7 +55,7 @@ export default function DetalleDeudoresPage(){
             </div>
             </section>
             <section className="bg-white px-10 py-5">
-              <Busqueda id={Number(idDeudor)}></Busqueda>
+              <Busqueda id={Number(idDeudor)} ></Busqueda>
             </section>
             <section>
             <DetalleReportDeudores id={Number(idDeudor)}></DetalleReportDeudores> 

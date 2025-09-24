@@ -1,6 +1,9 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
+import { Button } from "./ui/button";
+import { useTurnoStore } from "@/hooks/turno";
+import DialogCerrarCaja from "./dialogCerrarCaja";
 
 
 export default function Sidebar(){
@@ -8,6 +11,8 @@ export default function Sidebar(){
    const location = useLocation();
    const ruta = location.pathname;
    const [openReportes, setOpenReportes] = useState(false);
+    const [open, setOpen] = useState(false);
+   const {turnoActivo}=useTurnoStore();
 
    const links = [
       {
@@ -112,6 +117,11 @@ export default function Sidebar(){
                              </Link>
                            </li>
                            <li>
+                             <Link to="/cortes" className="block px-2 py-2 text-gray-700 hover:bg-red-500 hover:text-white rounded-lg">
+                               Mis Cortes
+                             </Link>
+                           </li>
+                           <li>
                              <Link to="/deudores" className="block px-2 py-2 text-gray-700 hover:bg-red-500 hover:text-white rounded-lg">
                                Acredores
                              </Link>
@@ -130,18 +140,19 @@ export default function Sidebar(){
                         <span className="ml-3">Perfil</span>
                      </Link>
                      
-                        <Link to="#" className="text-base text-gray-900 font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group ">
+                      <Button className="" onClick={()=>setOpen(true)} disabled={turnoActivo?false:true} >
                            <svg className="w-6 h-6 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                               <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd"></path>
                            </svg>
-                           <span className="ml-3 flex-1 whitespace-nowrap">Cerrar Sesión</span>
-                        </Link>                                                         
+                           <span className="ml-3 flex-1 whitespace-nowrap">Cerrar Caja</span>
+                      </Button>                                                         
                   </div>
 
 
                </div>
             </div>
          </div>
+         <DialogCerrarCaja isOpen={open} setOpen={setOpen} ></DialogCerrarCaja>
       </aside>
     )
 }

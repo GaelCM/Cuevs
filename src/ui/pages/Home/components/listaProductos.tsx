@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button";
 import { useListaProductos } from "@/hooks/listaProductos";
 
 
-export function ListaProductos(){
+interface ListaProductosProps {
+    busquedaRef: React.RefObject<{ focus: () => void } | null>;
+}
+
+export function ListaProductos({ busquedaRef }: ListaProductosProps) {
 
     const {carrito,incrementQuantity,decrementQuantity,removeProduct}=useListaProductos()
    
@@ -16,7 +20,7 @@ export function ListaProductos(){
         <div className="mx-auto max-w-screen-2xl px-4 py-5 2xl:px-0">
     <div className="mx-18">
         <div className="py-10">
-        <Busqueda></Busqueda>
+        <Busqueda ref={busquedaRef}></Busqueda>
         </div>
         <h2 className="text-xl text-center font-light text-gray-900 dark:text-white sm:text-2xl">Lista de productos</h2>
     </div>

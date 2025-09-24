@@ -96,14 +96,14 @@ db.prepare(`CREATE TABLE IF NOT EXISTS detalleVentas (
 
 // Tabla de Compras
 db.prepare(`CREATE TABLE IF NOT EXISTS compras (
-  idCompra INTEGER PRIMARY KEY,
+  idCompra INTEGER PRIMARY KEY AUTOINCREMENT,
   idProveedor INTEGER NOT NULL,
   fechaCompra TEXT NOT NULL,
   totalCompra REAL NOT NULL,
   idUsuario INTEGER,
   numeroFactura TEXT,
-  idEstado INTEGER DEFAULT 1
-)`).run();
+  idEstado INTEGER DEFAULT 1,
+  concepto TEXT)`).run();
 
 // Tabla de Detalle de Compras
 db.prepare(`CREATE TABLE IF NOT EXISTS detalleCompras (
@@ -112,6 +112,25 @@ db.prepare(`CREATE TABLE IF NOT EXISTS detalleCompras (
   idProducto INTEGER,
   cantidad INTEGER NOT NULL,
   precioUnitario REAL NOT NULL
+)`).run();
+
+
+// Tabla de Detalle de Compras
+db.prepare(`CREATE TABLE IF NOT EXISTS cortesCaja (
+    idCorte INTEGER PRIMARY KEY AUTOINCREMENT,
+    idUsuario INTEGER NOT NULL,
+    fechaApertura DATETIME NOT NULL,
+    fechaCierre DATETIME,
+    montoInicialEfectivo REAL NOT NULL DEFAULT 0,
+    ventasEfectivo REAL DEFAULT 0,
+    ventasTarjeta REAL DEFAULT 0,
+    totalVentas REAL DEFAULT 0,
+    "totalCompras" REAL DEFAULT 0,
+    montoFinalEfectivo REAL DEFAULT 0,
+    diferencia REAL DEFAULT 0,
+    observaciones TEXT,
+    estado TEXT DEFAULT 'ABIERTO', -- 'ABIERTO', 'CERRADO'
+    FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario)
 )`).run();
 
 // Tabla de Movimientos de Inventario

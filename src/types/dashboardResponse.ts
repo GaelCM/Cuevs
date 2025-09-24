@@ -3,6 +3,8 @@
     fecha: string;
     monto_total_ventas: number;
     numero_ventas: number;
+    ventasEfectivo:number;
+    ventasTarjeta:number;
   }
   
   export interface TopProductoVendido {

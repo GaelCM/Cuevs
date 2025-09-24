@@ -9,11 +9,12 @@ import { useListaProductos } from "@/hooks/listaProductos";
 
 
 
-export default function Bar(){
-   
+interface BarProps {
+   busquedaRef?: React.RefObject<{ focus: () => void } | null>;
+}
+
+export default function Bar({ busquedaRef }: BarProps = {}){
    const[isOpen, setIsOpen]=React.useState(false)
-
-
    const {getTotalPrice, getTotalItems, carrito}=useListaProductos()
    
    
@@ -61,7 +62,7 @@ export default function Bar(){
                </div>
             </div>
          </div>
-         <DialogConfirmVenta isOpen={isOpen} onOpenChange={setIsOpen}></DialogConfirmVenta>
+         <DialogConfirmVenta isOpen={isOpen} onOpenChange={setIsOpen} busquedaRef={busquedaRef}></DialogConfirmVenta>
       </aside>
     )
 }

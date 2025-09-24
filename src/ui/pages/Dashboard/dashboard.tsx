@@ -1,8 +1,11 @@
 
+import { obtenerTotalComprasApi } from "@/api/compras/comprasLocal";
 import { obtenerDatosVentaPorDIaApi, obtenerProductosMasVendidosPorCategoriaApi, obtenerTopProductosVendidosApi, obtenerVentasPorHoraApi } from "@/api/dashboard/dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { CalendarDays, DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -18,6 +21,12 @@ export function DashboardPage(){
 
   const [categoryData, setCategoryData] = useState<ProductoMasVendidoPorCategoria[]>([]);
 
+  const [totalCompras, setTotalCompras]=useState<number>(0.00);
+
+  const timeZone = 'America/Mexico_City';
+  const now = new Date();
+  const zonedDate = toZonedTime(now, timeZone);
+  const fechaHoy = format(zonedDate, 'yyyy-MM-dd');
 
   useEffect(() => {
     obtenerDatosVentaPorDIaApi().then(res => {
@@ -52,12 +61,23 @@ export function DashboardPage(){
       }
     })
 
-  }, []);
+    obtenerTotalComprasApi(fechaHoy,fechaHoy).then(res=>{
+      if(res){
+        setTotalCompras(res[0].total);
+      }else{
+        setTotalCompras(0.00);
+      }
+    })
+
+  }, [fechaHoy]);
 
   // Calcular totales
   const totalSales = salesData.reduce((sum, item) => sum + item.monto_total_ventas, 0);
   const totalTransactions = salesData.reduce((sum, item) => sum + item.numero_ventas, 0);
   const averageTicket = totalSales / totalTransactions;
+  const ventasEfectivo=salesData.reduce((sum, item) => sum + item.ventasEfectivo, 0);
+  const ventasTarjeta=salesData.reduce((sum, item) => sum + item.ventasTarjeta, 0);
+  console.log(salesData)
 
   // Colores para gráficos
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C'];
@@ -75,7 +95,6 @@ export function DashboardPage(){
     return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
 
   };
-
     return(
         <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -83,7 +102,7 @@ export function DashboardPage(){
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard de Ventas</h1>
-            <p className="text-gray-600">Análisis del dia {new Date().toISOString().split('T')[0]}</p>
+            <p className="text-gray-600">Análisis del dia {fechaHoy}</p>
           </div>
           <Badge variant="secondary" className="text-sm">
             <CalendarDays className="w-4 h-4 mr-1" />
@@ -92,7 +111,7 @@ export function DashboardPage(){
         </div>
 
         {/* KPIs */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Ventas Totales</CardTitle>
@@ -100,6 +119,28 @@ export function DashboardPage(){
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">${totalSales.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">+12.5% vs período anterior</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Ventas en efectivo</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">${ventasEfectivo.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">%</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Ventas Tarjeta</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">${ventasTarjeta.toLocaleString()||""}</div>
               <p className="text-xs text-muted-foreground">+12.5% vs período anterior</p>
             </CardContent>
           </Card>
@@ -123,6 +164,17 @@ export function DashboardPage(){
             <CardContent>
               <div className="text-2xl font-bold">${averageTicket.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">+3.8% vs período anterior</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Compras</CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">${totalCompras.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">Productos vendidos</p>
             </CardContent>
           </Card>
 
@@ -301,7 +353,7 @@ export function DashboardPage(){
                 <tbody>
                   {salesData.map((sale, index) => (
                     <tr key={index} className="border-b hover:bg-gray-50">
-                      <td className="p-3">{formatDate(sale.fecha)}</td>
+                      <td className="p-3">{sale.fecha}</td>
                       <td className="p-3 text-right">{sale.numero_ventas}</td>
                       <td className="p-3 text-right font-semibold">${sale.monto_total_ventas}</td>
                       <td className="p-3 text-right">${(sale.monto_total_ventas / sale.numero_ventas).toFixed(2)}</td>

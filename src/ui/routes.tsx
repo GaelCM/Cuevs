@@ -18,6 +18,8 @@ import PerfilPages from "./pages/Perfil/Perfil";
 import InventarioPage from "./pages/Inventario/Inventario";
 import DeudoresPage from "./pages/Deudores/deudoresPage";
 import DetalleDeudoresPage from "./pages/DetalleDeudores/detalleDeudoresPage";
+import NuevaCompra from "./pages/Compras/nuevaCompra/nuevaCompra";
+import CortesPage from "./pages/Reportes/ReporteCortes/cortesPage";
 
 export const routes = createHashRouter([
   {
@@ -42,6 +44,14 @@ export const routes = createHashRouter([
           {
             path: "/compras",
             element:<ComprasPage/>
+          },
+          {
+            path: "/cortes",
+            element:<CortesPage/>
+          },
+          {
+            path: "/compras/nuevaCompra",
+            element:<NuevaCompra/>
           },
           {
             path: "/categorias",

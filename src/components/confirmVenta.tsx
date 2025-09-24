@@ -16,8 +16,11 @@ type DialogConfirmProps ={
 }
 
 
-export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirmProps) {
+interface DialogConfirmVentaProps extends DialogConfirmProps {
+    busquedaRef?: React.RefObject<{ focus: () => void } | null>;
+}
 
+export default function DialogConfirmVenta({isOpen, onOpenChange, busquedaRef} :DialogConfirmVentaProps) {
     const {carrito,getTotalPrice,clearCart}=useListaProductos();
     const {user}=useUserData();
     //const router=useRouter();
@@ -30,7 +33,11 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
         setEstadoVenta("inicio") // Reiniciar el estado de la venta
         clearCart() // Limpiar el carrito
         setCambioEfectivo(0) // Reiniciar el cambio
-        onOpenChange(!isOpen) // Cerrar el diálogo
+        onOpenChange(false) // Cerrar el diálogo
+        // Usar setTimeout para asegurarnos que el focus se aplique después de que el diálogo se cierre
+        setTimeout(() => {
+            busquedaRef?.current?.focus();
+        }, 100);
     }
 
     const generarNuevaVenta=async()=>{
@@ -68,7 +75,6 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
     
 
     return(        
-
         <Dialog open={isOpen} onOpenChange={() => onOpenChange(false)}>
         {estadoVenta === "inicio" && (
             <DialogContent className="sm:max-w-[750px] p-0">
@@ -105,10 +111,7 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
                     />
                 </div>
 
-                <DialogFooter className="bg-gray-50 p-4 border-t">
-                    <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-red-200">
-                        Cancelar
-                    </Button>
+                <DialogFooter className="bg-gray-50 p-4 border-t">    
                     <Button variant="outline" onClick={generarNuevaVenta} className="bg-green-200">
                         Terminar venta
                     </Button>
@@ -147,10 +150,7 @@ export default function DialogConfirmVenta({isOpen, onOpenChange} :DialogConfirm
                 <p className="text-md font-bold text-red-600 opacity-70 ">Folio venta: {folio}</p>
                 </div>
                 <div className="flex justify-center">
-                    <Button className="mt-6" onClick={() => {
-                        reloadVenta();
-                        onOpenChange(false);
-                    }}>
+                    <Button className="mt-6" onClick={reloadVenta}>
                         Finalizar venta 
                     </Button>
                 </div>
