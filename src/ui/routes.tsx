@@ -12,14 +12,16 @@ import UsuariosPage from "./pages/Usuarios/Usuarios";
 import CategoriasPage from "./pages/Categorias/Categorias";
 import EditCategoriasPage from "./pages/EditCategorias/EditCategorias";
 import ProductosXCategoriaPage from "./pages/Categorias/productosXcategoria/ProductosXcategoria";
-import ComprasPage from "./pages/Compras/Compras";
 import ProveedoresPage from "./pages/Proveedores/Proveedores";
 import PerfilPages from "./pages/Perfil/Perfil";
 import InventarioPage from "./pages/Inventario/Inventario";
 import DeudoresPage from "./pages/Deudores/deudoresPage";
 import DetalleDeudoresPage from "./pages/DetalleDeudores/detalleDeudoresPage";
-import NuevaCompra from "./pages/Compras/nuevaCompra/nuevaCompra";
+import NuevaCompra from "./pages/Egresos/compras/nuevaCompra/nuevaCompra";
 import CortesPage from "./pages/Reportes/ReporteCortes/cortesPage";
+import EgresosPage from "./pages/Egresos/egresosPage";
+import NuevoGasto from "./pages/Egresos/egresos/nuevoGasto/nuevoGasto";
+import VentasPorMesPage from "./pages/ReportesGeneral/reportesGeneralPage";
 
 export const routes = createHashRouter([
   {
@@ -43,7 +45,7 @@ export const routes = createHashRouter([
           },
           {
             path: "/compras",
-            element:<ComprasPage/>
+            element:<EgresosPage/>
           },
           {
             path: "/cortes",
@@ -52,6 +54,10 @@ export const routes = createHashRouter([
           {
             path: "/compras/nuevaCompra",
             element:<NuevaCompra/>
+          },
+          {
+            path: "/gastos/nuevoGasto",
+            element:<NuevoGasto/>
           },
           {
             path: "/categorias",
@@ -84,6 +90,10 @@ export const routes = createHashRouter([
           {
             path: "/reportes/reportesVentas/detalleVenta",
             element: <ReporteVentasDetailPage />,
+          },
+          {
+            path: "/reportes/ventasPorMes",
+            element: <VentasPorMesPage/>,
           },
           {
             path: "/inventario",

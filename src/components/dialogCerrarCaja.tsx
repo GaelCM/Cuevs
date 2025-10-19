@@ -229,6 +229,18 @@ export default function DialogCerrarCaja({isOpen,setOpen}:props){
                                             {formatCurrency(data.totalCompras)}
                                         </span>
                                     </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm">Total Gastos:</span>
+                                        <span className="font-semibold text-red-600">
+                                            {formatCurrency(data.totalGastos)}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm">Total Egresos:</span>
+                                        <span className="font-semibold text-red-600">
+                                            {formatCurrency(data.totalEgresos)}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
@@ -240,7 +252,7 @@ export default function DialogCerrarCaja({isOpen,setOpen}:props){
                                     <div className="flex justify-between">
                                         <span className="text-sm">Balance Neto:</span>
                                         <span className="font-bold text-lg">
-                                            {formatCurrency(data.totalVentas - data.totalCompras)}
+                                            {formatCurrency(data.totalVentas - data.totalEgresos)}
                                         </span>
                                     </div>
                                 </div>

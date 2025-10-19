@@ -1,14 +1,17 @@
 
 import { obtenerTotalComprasApi } from "@/api/compras/comprasLocal";
-import { obtenerDatosVentaPorDIaApi, obtenerProductosMasVendidosPorCategoriaApi, obtenerTopProductosVendidosApi, obtenerVentasPorHoraApi } from "@/api/dashboard/dashboard";
+import { obtenerDatosVentaPorDIaApi, obtenerProductosBajoInventarioApi, obtenerProductosMasVendidosPorCategoriaApi, obtenerTopProductosVendidosApi, obtenerVentasPorHoraApi } from "@/api/dashboard/dashboard";
+import { obtenerTotalgastosApi } from "@/api/gastos/gastosLocal";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
+import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, ProductosBajoStock, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import { CalendarDays, DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
+import { ArrowRight, CalendarDays,DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useNavigate } from "react-router";
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 
 export function DashboardPage(){
@@ -21,12 +24,16 @@ export function DashboardPage(){
 
   const [categoryData, setCategoryData] = useState<ProductoMasVendidoPorCategoria[]>([]);
 
+  const [productosBajoStock, setProductosBajoStock] = useState<ProductosBajoStock[]>([]);
+
   const [totalCompras, setTotalCompras]=useState<number>(0.00);
+  const [totalGastos, setTotalGastos]=useState<number>(0.00);
 
   const timeZone = 'America/Mexico_City';
   const now = new Date();
   const zonedDate = toZonedTime(now, timeZone);
   const fechaHoy = format(zonedDate, 'yyyy-MM-dd');
+  const navigate=useNavigate();
 
   useEffect(() => {
     obtenerDatosVentaPorDIaApi().then(res => {
@@ -69,6 +76,22 @@ export function DashboardPage(){
       }
     })
 
+    obtenerTotalgastosApi(fechaHoy,fechaHoy).then(res=>{
+      if(res){
+        setTotalGastos(res[0].total);
+      }else{
+        setTotalGastos(0.00);
+      }
+    })
+
+    obtenerProductosBajoInventarioApi().then(res=>{
+      if(res){
+        setProductosBajoStock(res)
+      }else{
+        setProductosBajoStock([])
+      }
+    })
+
   }, [fechaHoy]);
 
   // Calcular totales
@@ -77,6 +100,7 @@ export function DashboardPage(){
   const averageTicket = totalSales / totalTransactions;
   const ventasEfectivo=salesData.reduce((sum, item) => sum + item.ventasEfectivo, 0);
   const ventasTarjeta=salesData.reduce((sum, item) => sum + item.ventasTarjeta, 0);
+  const egresosTotales=totalCompras+totalGastos;
   console.log(salesData)
 
   // Colores para gráficos
@@ -111,7 +135,7 @@ export function DashboardPage(){
         </div>
 
         {/* KPIs */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Ventas Totales</CardTitle>
@@ -169,12 +193,34 @@ export function DashboardPage(){
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Egresos</CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">${egresosTotales||0}</div>
+              <p className="text-xs text-muted-foreground">Total de egresos el dia de hoy</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Compras</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${totalCompras.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">Productos vendidos</p>
+              <div className="text-2xl font-bold">${totalCompras||0}</div>
+              <p className="text-xs text-muted-foreground">Total de compras hoy</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Gastos</CardTitle>
+              <Package className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">${totalGastos||0}</div>
+              <p className="text-xs text-muted-foreground">Total de gastos hoy</p>
             </CardContent>
           </Card>
 
@@ -192,97 +238,6 @@ export function DashboardPage(){
 
         {/* Gráficos principales */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Ventas por día */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Ventas por Día</CardTitle>
-              <CardDescription>Evolución diaria de ventas e ingresos</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={salesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="fecha" 
-                    tickFormatter={formatDate}
-                  />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip 
-                    labelFormatter={formatDate}
-                    formatter={(value, name) => [
-                      name === 'monto_total_ventas' ? `$${value}` : value,
-                      name === 'monto_total_ventas' ? 'Ingresos' : 'Transacciones'
-                    ]}
-                  />
-                  <Bar yAxisId="left" dataKey="monto_total_ventas" fill="#8884d8" name="monto_total_ventas" />
-                  <Line yAxisId="right" type="monotone" dataKey="numero_ventas" stroke="#82ca9d" strokeWidth={3} name="numero_ventas" />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Ventas por hora */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Ventas por Hora</CardTitle>
-              <CardDescription>Distribución de ventas durante el día</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={hourlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="hora" 
-                    tickFormatter={(value) => `${value}:00`}
-                  />
-                  <YAxis />
-                  <Tooltip 
-                    labelFormatter={(value) => `${value}:00 hrs`}
-                    formatter={(value, name) => [
-                      name === 'total_ventas' ? `$${value}` : value,
-                      name === 'total_ventas' ? 'Ingresos' : 'Transacciones'
-                    ]}
-                  />
-                  <Bar dataKey="total_ventas" fill="#0088FE" name="total_ventas" />
-                  <Bar dataKey="numero_ventas" fill="#00C49F" name="numero_ventas" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Productos y categorías */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Top productos */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Top 10 Productos Más Vendidos</CardTitle>
-              <CardDescription>Productos ordenados por cantidad vendida</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {topProducts.slice(0, 8).map((product, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-semibold text-blue-600">{index + 1}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{product.nombreProducto}</p>
-                        <p className="text-sm text-gray-500">{product.total_vendido} unidades vendidas</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">${product.ingresos_totales}</p>
-                      <p className="text-sm text-gray-500">ingresos</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Categorías */}
           <Card>
             <CardHeader>
@@ -329,46 +284,206 @@ export function DashboardPage(){
                 </div>
               </div>
             </CardContent>
+          </Card>            
+          {/* Ventas por hora */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Ventas por Hora</CardTitle>
+              <CardDescription>Distribución de ventas durante el día</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={hourlyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="hora" 
+                    tickFormatter={(value) => `${value}:00`}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    labelFormatter={(value) => `${value}:00 hrs`}
+                    formatter={(value, name) => [
+                      name === 'total_ventas' ? `$${value}` : value,
+                      name === 'total_ventas' ? 'Ingresos' : 'Transacciones'
+                    ]}
+                  />
+                  <Bar dataKey="total_ventas" fill="#0088FE" name="total_ventas" />
+                  <Bar dataKey="numero_ventas" fill="#00C49F" name="numero_ventas" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
           </Card>
         </div>
 
-        {/* Tabla resumen */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Resumen Detallado por Fecha</CardTitle>
-            <CardDescription>Análisis completo de ventas por día</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-semibold">Fecha</th>
-                    <th className="text-right p-3 font-semibold">Transacciones</th>
-                    <th className="text-right p-3 font-semibold">Ingresos Totales</th>
-                    <th className="text-right p-3 font-semibold">Ticket Promedio</th>
-                    <th className="text-right p-3 font-semibold">% del Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {salesData.map((sale, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
-                      <td className="p-3">{sale.fecha}</td>
-                      <td className="p-3 text-right">{sale.numero_ventas}</td>
-                      <td className="p-3 text-right font-semibold">${sale.monto_total_ventas}</td>
-                      <td className="p-3 text-right">${(sale.monto_total_ventas / sale.numero_ventas).toFixed(2)}</td>
-                      <td className="p-3 text-right">
-                        <Badge variant="outline">
-                          {((sale.monto_total_ventas / totalSales) * 100).toFixed(1)}%
-                        </Badge>
-                      </td>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Top productos */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Top 10 Productos Más Vendidos</CardTitle>
+              <CardDescription>Productos ordenados por cantidad vendida</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {topProducts.slice(0, 8).map((product, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-semibold text-blue-600">{index + 1}</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{product.nombreProducto}</p>
+                        <p className="text-sm text-gray-500">{product.total_vendido} unidades vendidas</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">${product.ingresos_totales}</p>
+                      <p className="text-sm text-gray-500">ingresos</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Productos Bajo Stock al lado de la tabla resumen */}
+<Card className="lg:col-span-2">
+  <CardHeader>
+    <CardTitle>Productos con Bajo Stock</CardTitle>
+    <CardDescription>Productos que requieren reposición</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse rounded-lg shadow-md">
+        <thead className="bg-muted text-muted-foreground">
+          <tr>
+            <th className="text-left p-3 font-semibold">Producto</th>
+            <th className="text-right p-3 font-semibold">Stock Actual</th>
+            <th className="text-right p-3 font-semibold">Stock Mínimo</th>
+            <th className="text-right p-3 font-semibold">Criticidad</th>
+            <th className="text-right p-3 font-semibold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {productosBajoStock.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="p-4 text-center text-sm text-muted-foreground">
+                No hay productos con bajo stock
+              </td>
+            </tr>
+          ) : (
+            productosBajoStock.map((p, idx) => (
+              <tr key={idx} className="border-b hover:bg-accent">
+                <td className="p-3">{p.nombre}</td>
+                <td className="p-3 text-right">{p.stock}</td>
+                <td className="p-3 text-right">{p.minimo}</td>
+                <td className="p-3 text-right">
+                  {p.stock === 0 ? (
+                    <Badge variant="destructive">Agotado</Badge>
+                  ) :
+                    <Badge variant="default" className="bg-yellow-600">Por agotarse</Badge>
+                  }
+                </td>
+                <td className="text-center">
+                  <Button variant={"outline"} className="hover:cursor-pointer" onClick={()=>{navigate(`/productos/detalleProducto?id=${p.idProducto}`)}}><ArrowRight></ArrowRight></Button>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </CardContent>
+</Card>
+        </div>
+
+        {/* Tabla resumen*/}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Resumen Detallado por Fecha</CardTitle>
+              <CardDescription>Análisis completo de ventas por día</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-3 font-semibold">Fecha</th>
+                      <th className="text-right p-3 font-semibold">Transacciones</th>
+                      <th className="text-right p-3 font-semibold">Ingresos Totales</th>
+                      <th className="text-right p-3 font-semibold">Ticket Promedio</th>
+                      <th className="text-right p-3 font-semibold">% del Total</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                  </thead>
+                  <tbody>
+                    {salesData.map((sale, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="p-3">{sale.fecha}</td>
+                        <td className="p-3 text-right">{sale.numero_ventas}</td>
+                        <td className="p-3 text-right font-semibold">${sale.monto_total_ventas}</td>
+                        <td className="p-3 text-right">${(sale.monto_total_ventas / sale.numero_ventas).toFixed(2)}</td>
+                        <td className="p-3 text-right">
+                          <Badge variant="outline">
+                            {((sale.monto_total_ventas / totalSales) * 100).toFixed(1)}%
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+          
+         {/* Ventas por día */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Composición de Ventas Diarias</CardTitle>
+              <CardDescription>Desglose de ventas por método de pago</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={salesData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="fecha" 
+                    tickFormatter={formatDate}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    labelFormatter={formatDate}
+                    formatter={(value, name) => [
+                      `$${value.toLocaleString()}`,
+                      name === 'ventasEfectivo' ? 'Efectivo' : 
+                      name === 'ventasTarjeta' ? 'Tarjeta' : 'Total'
+                    ]}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="ventasEfectivo" 
+                    stackId="a" 
+                    fill="#0088FE" 
+                    name="Efectivo"
+                  />
+                  <Bar 
+                    dataKey="ventasTarjeta" 
+                    stackId="a" 
+                    fill="#00C49F" 
+                    name="Tarjeta"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="monto_total_ventas"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                    name="Total"
+                    dot={{ fill: '#8884d8' }}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
     )

@@ -15,9 +15,9 @@ function CortesController(){
         const stmt = db.prepare(`
             INSERT INTO cortesCaja 
             (idUsuario, fechaApertura, montoInicialEfectivo, ventasEfectivo, ventasTarjeta, 
-             totalVentas, totalCompras, montoFinalEfectivo, diferencia, 
+             totalVentas, totalCompras, totalGastos, totalEgresos, montoFinalEfectivo, diferencia, 
              observaciones, estado) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
         
         const res = stmt.run(
@@ -28,6 +28,8 @@ function CortesController(){
             0, // ventasTarjeta (inicia en 0)
             0, // totalVentas (inicia en 0)
             0, // totalCompras (inicia en 0)
+            0, // totalGastos (inicia en 0)
+            0, // totalEgresos (inicia en 0)
             0, // montoFinalEfectivo (se llena al cerrar)
             0, // diferencia (se calcula al cerrar)
             '', // observaciones de apertura
@@ -83,8 +85,17 @@ function CortesController(){
         `);
         const comprasData = comprasStmt.get(corteData.fechaApertura, dataCierre.idUsuario); //HACEMOS UNA CONSULTA A TODAS LAS COMPRAS HECHAS EL DÍA EN EL QUE SE ABRIO EL TURNO
 
+        const gastosStmt = db.prepare(`
+            SELECT 
+                COUNT(*) as totalTransaccionesGastos,
+                SUM(monto) as totalGastos
+            FROM gastos 
+            WHERE DATE(fechaRegistro) = DATE(?)
+        `);
+        const gastosData = gastosStmt.get(corteData.fechaApertura); // Consulta a todos los gastos hechos el día en el que se abrió el turno
+
         // Calcular el monto esperado en efectivo
-       const montoEsperado = ( corteData.montoInicialEfectivo + (ventasData.ventasEfectivo || 0) ) - (comprasData.totalCompras || 0); // RESTAMOS compras
+       const montoEsperado = ( corteData.montoInicialEfectivo + (ventasData.ventasEfectivo || 0) ) - ((comprasData.totalCompras || 0)+(gastosData.totalGastos || 0)); // RESTAMOS compras
             
         // Calcular diferencia
         const diferencia = dataCierre.montoFinalEfectivo - montoEsperado;//AQUI HACEMOS LA RESTA DE LO SE SUPONE QUE TENEMOS CONTRA LO QUE REALEMNTE TENEMOS DE EFECTIVO.
@@ -97,6 +108,8 @@ function CortesController(){
                 ventasTarjeta = ?,
                 totalVentas = ?,
                 totalCompras = ?,
+                totalGastos = ?,
+                totalEgresos = ?,
                 montoFinalEfectivo = ?,
                 diferencia = ?,
                 observaciones = ?,
@@ -110,6 +123,8 @@ function CortesController(){
             ventasData.ventasTarjeta || 0,
             ventasData.totalVentas || 0,
             comprasData.totalCompras || 0,
+            gastosData.totalGastos || 0,
+            (comprasData.totalCompras || 0) + (gastosData.totalGastos || 0),
             dataCierre.montoFinalEfectivo,
             diferencia,
             dataCierre.observaciones || '',
@@ -127,6 +142,8 @@ function CortesController(){
                 ventasEfectivo: ventasData.ventasEfectivo || 0,
                 montoInicial: corteData.montoInicialEfectivo,
                 totalCompras: comprasData.totalCompras || 0,
+                totalGastos: gastosData.totalGastos || 0,
+                totalEgresos: (comprasData.totalCompras || 0) + (gastosData.totalGastos || 0),
                 montoEsperado: montoEsperado,
                 montoFinal: dataCierre.montoFinalEfectivo,
                 diferencia: diferencia,  

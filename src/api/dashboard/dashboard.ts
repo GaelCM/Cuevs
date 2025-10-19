@@ -1,4 +1,4 @@
-import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
+import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, ProductosBajoStock, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
 
 // Función helper para verificar si estamos en el cliente
 const isClient = typeof window !== 'undefined';
@@ -31,6 +31,14 @@ export const obtenerProductosMasVendidosPorCategoriaApi = async (): Promise<Prod
     if (isClient && window.electronApi?.obtenerProductosMasVendidosPorCategoria) {
       const res = await window.electronApi?.obtenerProductosMasVendidosPorCategoria()
       return res as ProductoMasVendidoPorCategoria[]
+    }
+    return null;
+}
+
+export const obtenerProductosBajoInventarioApi = async (): Promise<ProductosBajoStock[]|null> => {
+    if (isClient && window.electronApi?.obtenerProductosBajoInventario) {
+      const res = await window.electronApi?.obtenerProductosBajoInventario()
+      return res as ProductosBajoStock[]
     }
     return null;
 }

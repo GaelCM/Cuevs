@@ -1,5 +1,8 @@
-import { ipcMain } from "electron";
-import db from "../db.js";
+import { ipcMain } from 'electron';
+import db  from '../db.js';
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+
 
 function registerInventarioController(){
 
@@ -93,6 +96,13 @@ function registerInventarioController(){
 
     
     ipcMain.handle('movimientosInventarioPorDia', () => {
+
+        const timeZone = 'America/Mexico_City';
+        const now = new Date();
+        const zonedDate = toZonedTime(now, timeZone);
+        const fechaHoy = format(zonedDate, 'yyyy-MM-dd');
+        
+
         const stmt = db.prepare(`  
             SELECT 
                 DATE(mi.fechaMovimiento) as fecha,
@@ -100,11 +110,11 @@ function registerInventarioController(){
                 COUNT(*) as numero_movimientos,
                 SUM(mi.cantidad) as cantidad_total
             FROM movimientosInventario mi
-            WHERE DATE(mi.fechaMovimiento) = date('now')
+            WHERE DATE(mi.fechaMovimiento) = ?
             GROUP BY DATE(mi.fechaMovimiento), mi.tipoMovimiento
             ORDER BY fecha DESC, mi.tipoMovimiento;
         `);
-        const res = stmt.all();
+        const res = stmt.all(fechaHoy);
         return res;
     });
 

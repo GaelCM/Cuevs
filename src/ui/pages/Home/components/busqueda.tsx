@@ -88,7 +88,7 @@ export const Busqueda = React.forwardRef<{ focus: () => void }, {id?:number}>(({
              />
             {errors.producto && <p className="text-red-500 text-sm">{errors.producto.message}</p>}   
         </form>
-        <DialogProducto isOpen={open} onOpenChange={setOpen} product={producto} idDeudor={id} ></DialogProducto>
+        <DialogProducto isOpen={open} onOpenChange={setOpen} product={producto} idDeudor={id} busquedaRef={inputRef} ></DialogProducto>
         </>
     )
 })

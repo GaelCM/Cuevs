@@ -14,6 +14,8 @@ import { deudoresController } from './controllers/deudoresController.js';
 import { comprasController } from './controllers/comprasController.js';
 import { CortesController } from './controllers/cortesController.js';
 import { cortesDashboardController } from './controllers/cortesDashboard.js';
+import { gastosController } from './controllers/gastosController.js';
+import { registerReportesGeneral } from './controllers/reportesGeneralController.js';
 
 
 function createWindow() {
@@ -38,7 +40,6 @@ function createWindow() {
         // En producción, carga el archivo generado
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
     }*/
-   
     mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
 }
 
@@ -58,6 +59,8 @@ app.whenReady().then(() => {
     comprasController();
     CortesController();
     cortesDashboardController();
+    gastosController();
+    registerReportesGeneral();
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

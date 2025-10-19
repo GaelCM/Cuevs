@@ -15,11 +15,12 @@ type DialogProductoProps ={
     product:Producto | null 
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
-    idDeudor?:number
+    idDeudor?:number,
+    busquedaRef: React.RefObject<{ focus: () => void } | null>;
 }
 
 
-export default function DialogProducto({product, isOpen, onOpenChange,idDeudor} :DialogProductoProps) {
+export default function DialogProducto({product, isOpen, onOpenChange,idDeudor,busquedaRef} :DialogProductoProps) {
 
     const [cantidad,setCantidad]=useState(1);
     const {addProduct}=useListaProductos()
@@ -46,7 +47,13 @@ export default function DialogProducto({product, isOpen, onOpenChange,idDeudor} 
     }
 
     return(
-      <Dialog open={isOpen} onOpenChange={() => onOpenChange(!isOpen)}>
+      <Dialog open={isOpen} onOpenChange={() => {
+        onOpenChange(!isOpen)
+        setTimeout(() => {
+            
+            busquedaRef?.current?.focus();
+        }, 100);
+        }}>
       <DialogContent className="sm:max-w-[750px] p-0 "> {/* Ajusta max-w si es necesario, quitamos padding general */}
           <DialogHeader className="p-6 pb-4">
               <DialogTitle className="text-2xl font-bold flex items-center gap-2">

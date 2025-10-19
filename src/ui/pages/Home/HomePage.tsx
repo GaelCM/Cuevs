@@ -7,12 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { IniciarTurno } from "./components/iniciarTurno";
 import { useTurnoStore } from "@/hooks/turno";
+import { useHotkeys } from "react-hotkeys-hook";
 
 
 export function HomePage(){
   const [isOpen,setIsOpen]=useState(false)
   const {turnoActivo}=useTurnoStore();
   const busquedaRef = useRef<{ focus: () => void } | null>(null);
+
+  useHotkeys(
+      'alt+p', 
+      () => {
+         setIsOpen(true);
+      },
+      // AQUÍ ESTÁ LA MAGIA 👇
+      { enableOnFormTags: true }
+    );
+  
 
     return (
       <>
@@ -24,14 +35,16 @@ export function HomePage(){
           <section>
             <Button onClick={()=>{setIsOpen(true)}} className="text-md bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full flex items-center gap-2 hover:cursor-pointer">
               <Search></Search>
-              Buscar Productos
+              Buscar Productos (Alt+p)
             </Button>
           </section>
+
           <section>
             <ListaProductos busquedaRef={busquedaRef}></ListaProductos>
           </section>
+          
           <section>
-            <DialogProductos isOpen={isOpen} onOpenChange={setIsOpen}></DialogProductos>
+            <DialogProductos isOpen={isOpen} onOpenChange={setIsOpen} busquedaRef={busquedaRef}></DialogProductos>
           </section>
         </div>)
 

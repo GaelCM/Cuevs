@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import DialogConfirmVenta from "./confirmVenta";
 import React from "react";
 import { useListaProductos } from "@/hooks/listaProductos";
-
+import { useHotkeys } from "react-hotkeys-hook";
 
 
 interface BarProps {
@@ -17,7 +17,14 @@ export default function Bar({ busquedaRef }: BarProps = {}){
    const[isOpen, setIsOpen]=React.useState(false)
    const {getTotalPrice, getTotalItems, carrito}=useListaProductos()
    
-   
+   useHotkeys(
+    'alt+k', 
+    () => {
+       setIsOpen(true);
+    },
+    // AQUÍ ESTÁ LA MAGIA 👇
+    { enableOnFormTags: true }
+  );
 
    const crearVenta=()=>{
       console.log("este es tu carrito")
@@ -46,7 +53,7 @@ export default function Bar({ busquedaRef }: BarProps = {}){
                   </div>
 
                   <div className="mt-8 flex justify-center">
-                     <Button onClick={crearVenta} className="text-3xl h-20 w-full bg-red-400 hover:bg-red-600 text-black font-bold">Venta</Button>
+                     <Button onClick={crearVenta} className="text-3xl h-20 w-full bg-red-400 hover:bg-red-600 text-black font-bold">Venta (Alt+k)</Button>
                   </div>
                     
                   </div>

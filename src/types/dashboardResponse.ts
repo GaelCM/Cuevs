@@ -24,3 +24,11 @@
     nombreProducto: string;
     total_vendido: number;
   }
+
+  export interface ProductosBajoStock {
+    idProducto:string;
+    nombre:string;
+    stock:number;
+    minimo:number;
+    criticidad:string;
+  }

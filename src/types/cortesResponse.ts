@@ -24,6 +24,8 @@ export type CorteFinalResponse={
     ventasTarjeta: number,
     totalVentas: number,
     totalCompras: number,
+    totalGastos: number,
+    totalEgresos: number,
     totalTransacciones: number
 }
 
@@ -37,7 +39,9 @@ export type CorteCajaReporte = {
   duracion_minutos: number | null; // ROUND puede devolver null si fechaCierre es null
   montoInicialEfectivo: number | null;
   totalVentas: number | null;
+  totalEgresos: number | null;
   totalCompras: number | null;
+  totalGastos: number | null;
   balance_operacional: number | null; // totalVentas - totalCompras
   ventasEfectivo: number | null;
   ventasTarjeta: number | null;

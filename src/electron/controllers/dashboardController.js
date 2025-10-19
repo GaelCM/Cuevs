@@ -79,6 +79,32 @@ function registerDashboardController(){
         return res;
     });
 
+    ipcMain.handle('obtenerProductosBajoInventario', () => {
+    const stmt = db.prepare(`
+        SELECT
+        idProducto, 
+        nombreProducto AS nombre,
+        stockActual AS stock,
+        stockMinimo AS minimo,
+        CASE 
+            WHEN stockActual < stockMinimo * 0.3 THEN 'Agotado'
+            WHEN stockActual < stockMinimo THEN 'Crítico'
+            ELSE 'Normal'
+        END AS criticidad
+        FROM productos
+        WHERE stockActual < stockMinimo
+        AND idEstado = 1
+        ORDER BY 
+        CASE 
+            WHEN stockActual < stockMinimo * 0.3 THEN 1
+            ELSE 2
+        END,
+        stockActual ASC
+        LIMIT ?;
+    `);
+    const productos = stmt.all(15);
+        return productos;
+    })
 
 
 

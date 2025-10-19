@@ -1,10 +1,12 @@
 import type { compra } from "@/types/compras";
 import type { CorteCajaReporte, CorteDataCierre, CorteFinalResponse, CorteResponse, ResumenDiarioCorteReporte } from "@/types/cortesResponse";
-import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
+import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, ProductosBajoStock, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
 import type { DetalleDeudorResponse, Deudores } from "@/types/deudores";
+import type { Gasto, GastoInput } from "@/types/gastos";
 import type { MovimientoInventarioPorDia, ProductoMayorRotacion, ProductoMenorRotacion, StockGeneral, StockPorCategoria } from "@/types/inventarioResponse";
 import type { Categorias, Producto, ProductoItem, ProductoResponse } from "@/types/Productos";
 import type { Proveedor } from "@/types/proveedores";
+import type { listaVentasPorMes, ventasPorMesReporte } from "@/types/reportesGenetal";
 import type { Notes } from "@/types/test";
 import type { Usuario, UsuarioPublico } from "@/types/Usuarios";
 import type { DetalleVenta, Venta, VentaResponse } from "@/types/ventas";
@@ -60,6 +62,8 @@ declare global {
         obtenerTopProductosVendidos: () => Promise<TopProductoVendido[]>;
         obtenerVentasPorHora: () => Promise<VentasPorHora[]>;
         obtenerProductosMasVendidosPorCategoria: () => Promise<ProductoMasVendidoPorCategoria[]>;
+        obtenerProductosBajoInventario:()=>Promise<ProductosBajoStock[]>;
+
         ///////////////////////////////
         insertarUsuario:(usuario:Usuario)=>Promise<{success:boolean,message: string,data: string}>
         obtenerUsuariosPublicos:()=>Promise<UsuarioPublico[]>;
@@ -90,11 +94,21 @@ declare global {
         reporteTotalCompras:(fechaDesde: string, fechaHasta: string)=>Promise<[{total:number}]>;
         obtenerCompras:(fechaDesde: string, fechaHasta: string)=>Promise<{success:boolean, message:string, data: compra[]}>;
 
+        ////////////////////////////
+        insertarGasto:(gasto:GastoInput)=>Promise<{success:boolean, message:string, data: string}>;
+        reporteTotalGastos:(fechaDesde: string, fechaHasta: string)=>Promise<[{total:number}]>;
+        obtenerGastos:(fechaDesde: string, fechaHasta: string)=>Promise<{success:boolean, message:string, data: Gasto[]}>;
+
         ///////////////////////////7
         insertarNuevoCorte:(idUsuario:number, montoInicialEfectivo:number)=>Promise<{success:boolean, message:string, data:CorteResponse}>;
         cerrarCorte:(dataCierre:CorteDataCierre)=>Promise<{success:boolean, message:string, data:CorteFinalResponse}>;
         detalleCortes:(fechaDesde: string, fechaHasta: string)=>Promise<{success:boolean, message:string, data:CorteCajaReporte[]}>;
         resumenDiarioCortes:(fechaDesde: string, fechaHasta: string)=>Promise<{success:boolean, message:string, data:ResumenDiarioCorteReporte[]}>;
+        ///////////////////////////7
+
+        getReporteVentasPorMes:(fechaDesde:string,fechaHasta:string)=>Promise<ventasPorMesReporte[]>;
+        getListaVentasPorMes:(fechaDesde:string,fechaHasta:string)=>Promise<listaVentasPorMes[]>;
+
       };
     }
   }

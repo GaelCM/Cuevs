@@ -105,6 +105,15 @@ db.prepare(`CREATE TABLE IF NOT EXISTS compras (
   idEstado INTEGER DEFAULT 1,
   concepto TEXT)`).run();
 
+
+  // Tabla de Gastos
+db.prepare(`CREATE TABLE IF NOT EXISTS gastos (
+    idGasto INTEGER PRIMARY KEY AUTOINCREMENT,
+    fechaRegistro TEXT NOT NULL,
+    monto REAL NOT NULL,
+    concepto TEXT NOT NULL
+)`).run();
+
 // Tabla de Detalle de Compras
 db.prepare(`CREATE TABLE IF NOT EXISTS detalleCompras (
   idDetalle INTEGER PRIMARY KEY,

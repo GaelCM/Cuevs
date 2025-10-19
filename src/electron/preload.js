@@ -32,6 +32,7 @@ contextBridge.exposeInMainWorld('electronApi', {
     obtenerTopProductosVendidos: () => ipcRenderer.invoke('obtenerTopProductosVendidos'),
     obtenerVentasPorHora: () => ipcRenderer.invoke('obtenerVentasPorHora'),
     obtenerProductosMasVendidosPorCategoria: () => ipcRenderer.invoke('obtenerProductosMasVendidosPorCategoria'),
+    obtenerProductosBajoInventario: () => ipcRenderer.invoke('obtenerProductosBajoInventario'),
     ///////////////////////////////
     obtenerUsuariosPublicos:()=>ipcRenderer.invoke('get-usuarios'),
     insertarUsuario: (usuario) => ipcRenderer.invoke('insertar-usuario', usuario),
@@ -62,11 +63,18 @@ contextBridge.exposeInMainWorld('electronApi', {
     insertarCompra:(compra)=>ipcRenderer.invoke('insertar-compra',compra),
     reporteTotalCompras:(fechaDesde, fechaHasta)=> ipcRenderer.invoke('reporte-total-compras',fechaDesde, fechaHasta),
     obtenerCompras:(fechaDesde, fechaHasta)=>ipcRenderer.invoke('obtener-compras',fechaDesde, fechaHasta),
+    ////////////gastos////////////////
+    insertarGasto:(gasto)=>ipcRenderer.invoke('insertar-gasto',gasto),
+    reporteTotalGastos:(fechaDesde, fechaHasta)=> ipcRenderer.invoke('reporte-total-gastos',fechaDesde, fechaHasta),
+    obtenerGastos:(fechaDesde, fechaHasta)=>ipcRenderer.invoke('obtener-gastos',fechaDesde, fechaHasta),
     ///////////cortes/////////////////
     insertarNuevoCorte:(idUsuario, montoInicialEfectivo)=>ipcRenderer.invoke('insertar-nuevo-corte',idUsuario, montoInicialEfectivo),
     cerrarCorte:(dataCierre)=>ipcRenderer.invoke('cerrar-turno',dataCierre),
     detalleCortes:(fechaDesde, fechaHasta)=>ipcRenderer.invoke('detalle-cortes',fechaDesde,fechaHasta),
-    resumenDiarioCortes:(fechaDesde, fechaHasta)=>ipcRenderer.invoke('resumen-diario-cortes',fechaDesde,fechaHasta)
+    resumenDiarioCortes:(fechaDesde, fechaHasta)=>ipcRenderer.invoke('resumen-diario-cortes',fechaDesde,fechaHasta),
 
+    /////////reportesGenerales////////////
+    getReporteVentasPorMes:(fechaDesde,fechaHasta)=>ipcRenderer.invoke('get-reporteVentasPorMes',fechaDesde,fechaHasta),
+    getListaVentasPorMes:(fechaDesde,fechaHasta)=>ipcRenderer.invoke('get-listaVentasPorMes',fechaDesde,fechaHasta)
     
   });

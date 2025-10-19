@@ -100,7 +100,12 @@ export function ListaProductos({ busquedaRef }: ListaProductosProps) {
                     variant="ghost" // 'ghost' para que no tenga tanto peso visual
                     size="icon"
                     className="h-8 w-8 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
-                    onClick={()=>removeProduct(producto.product.idProducto)}
+                    onClick={()=>{
+                        removeProduct(producto.product.idProducto)
+                        setTimeout(() => {
+                                busquedaRef?.current?.focus();
+                        }, 100);           
+                    }}
                 >
                     <Trash2 />
                 </Button>

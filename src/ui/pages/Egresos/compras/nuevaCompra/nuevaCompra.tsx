@@ -100,7 +100,7 @@ export default function NuevaCompra() {
   
 
   return (
-    <div className="bg-gray-50 p-6">
+    <div className="bg-white p-6">
       {/* Header similar al diseño */}
       <div className="mb-8">
         <div className="flex items-center justify-between">

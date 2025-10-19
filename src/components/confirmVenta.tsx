@@ -65,6 +65,7 @@ export default function DialogConfirmVenta({isOpen, onOpenChange, busquedaRef} :
         }else{
             console.log(res) // Maneja la respuesta según sea necesario
             setEstadoVenta("finalizado"); 
+            setTipoPago(0)
             setFolio(res.data) // Asigna el folio de la venta
             toast.success('Venta generada correctamente', {
                 description:`La venta se ha generado correctamente, FOLIO ${res.data}`,})
@@ -75,7 +76,15 @@ export default function DialogConfirmVenta({isOpen, onOpenChange, busquedaRef} :
     
 
     return(        
-        <Dialog open={isOpen} onOpenChange={() => onOpenChange(false)}>
+        <Dialog open={isOpen} onOpenChange={() => {
+            setTipoPago(0)
+            onOpenChange(false)
+            setTimeout(() => {
+                busquedaRef?.current?.focus();
+            }, 100);
+            
+            
+            }}>
         {estadoVenta === "inicio" && (
             <DialogContent className="sm:max-w-[750px] p-0">
                 <DialogHeader className="p-6 pb-4">

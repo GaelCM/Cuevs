@@ -93,7 +93,9 @@ export default function CortesDetail({ cortes, resumenDiarioCortes }: props) {
                   <TableHead className="hidden md:table-cell">Duración (min)</TableHead>
                   <TableHead>Total Ventas</TableHead>
                   <TableHead>Ventas efectivo</TableHead>
+                  <TableHead>Total Egresos</TableHead>
                   <TableHead>Total Compras</TableHead>
+                  <TableHead>Total Gastos</TableHead>
                   <TableHead>Balance operacional</TableHead>
                   <TableHead>Monto inicial</TableHead>
                   <TableHead>Monto final de efectivo</TableHead>
@@ -116,7 +118,9 @@ export default function CortesDetail({ cortes, resumenDiarioCortes }: props) {
                     </TableCell>
                     <TableCell>{formatCurrency(corte.totalVentas)}</TableCell>
                     <TableCell>{formatCurrency(corte.ventasEfectivo)}</TableCell>
-                    <TableCell>{formatCurrency(corte.totalCompras)}</TableCell>
+                     <TableCell>{formatCurrency(corte.totalEgresos)}</TableCell>
+                      <TableCell>{formatCurrency(corte.totalCompras)}</TableCell>
+                    <TableCell>{formatCurrency(corte.totalGastos)}</TableCell>
                     <TableCell>{formatCurrency(corte.balance_operacional)}</TableCell>
                     <TableCell>{formatCurrency(corte.montoInicialEfectivo)}</TableCell>
                     <TableCell>{formatCurrency(corte.montoFinalEfectivo)}</TableCell>

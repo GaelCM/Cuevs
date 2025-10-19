@@ -1,7 +1,7 @@
 {
   "name": "cuevs-sistema-final",
   "private": true,
-  "version": "2.1.1",
+  "version": "3.5.0",
   "type": "module",
   "main": "src/electron/main.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.59.0",
+    "react-hotkeys-hook": "^5.1.0",
     "react-router": "^7.6.3",
     "recharts": "^3.0.2",
     "sonner": "^2.0.5",

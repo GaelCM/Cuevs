@@ -38,7 +38,7 @@ export default function Sidebar(){
         )
       },
       {
-        name: 'Compras', href: '/compras',
+        name: 'Egresos', href: '/compras',
         icon: (isValid:boolean) => (
           <svg className={`w-6 h-6 ${isValid ? 'text-white' : 'text-gray-500'} flex-shrink-0 group-hover:text-white transition duration-75`} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path d="M16 6V4a4 4 0 00-8 0v2H4a1 1 0 000 2h1l1.68 8.39A2 2 0 008.62 18h2.76a2 2 0 001.94-1.61L15 8h1a1 1 0 100-2h-1zM8 4a2 2 0 114 0v2H8V4zm2 12a1 1 0 01-1-.78L7.22 8h5.56l-1.78 7.22A1 1 0 0110 16z" />
@@ -122,8 +122,8 @@ export default function Sidebar(){
                              </Link>
                            </li>
                            <li>
-                             <Link to="/deudores" className="block px-2 py-2 text-gray-700 hover:bg-red-500 hover:text-white rounded-lg">
-                               Acredores
+                             <Link to="/reportes/ventasPorMes" className="block px-2 py-2 text-gray-700 hover:bg-red-500 hover:text-white rounded-lg">
+                               VentasPorMes
                              </Link>
                            </li>
                          </ul>
