@@ -1,4 +1,5 @@
 
+import { mandarReporteDashboardApi } from "@/api/alertasController/alertas";
 import { obtenerTotalComprasApi } from "@/api/compras/comprasLocal";
 import { obtenerDatosVentaPorDIaApi, obtenerProductosBajoInventarioApi, obtenerProductosMasVendidosPorCategoriaApi, obtenerTopProductosVendidosApi, obtenerVentasPorHoraApi } from "@/api/dashboard/dashboard";
 import { obtenerTotalgastosApi } from "@/api/gastos/gastosLocal";
@@ -8,10 +9,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { DatosVentaPorDia, ProductoMasVendidoPorCategoria, ProductosBajoStock, TopProductoVendido, VentasPorHora } from "@/types/dashboardResponse";
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import { ArrowRight, CalendarDays,DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
+import { ArrowRight, BellRing, CalendarDays,DollarSign, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { toast } from "sonner";
 
 
 export function DashboardPage(){
@@ -94,6 +96,9 @@ export function DashboardPage(){
 
   }, [fechaHoy]);
 
+
+
+
   // Calcular totales
   const totalSales = salesData.reduce((sum, item) => sum + item.monto_total_ventas, 0);
   const totalTransactions = salesData.reduce((sum, item) => sum + item.numero_ventas, 0);
@@ -117,8 +122,16 @@ export function DashboardPage(){
   const formatDate = (dateString:string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-
   };
+
+  const enviarAlertas=async()=>{
+    const res=await mandarReporteDashboardApi();
+    if(res?.success){
+      toast.success("Alertas enviadas correctamente");
+    }
+
+  }
+
     return(
         <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -128,10 +141,13 @@ export function DashboardPage(){
             <h1 className="text-3xl font-bold text-gray-900">Dashboard de Ventas</h1>
             <p className="text-gray-600">Análisis del dia {fechaHoy}</p>
           </div>
-          <Badge variant="secondary" className="text-sm">
-            <CalendarDays className="w-4 h-4 mr-1" />
-            Últimos datos obtenidos
-          </Badge>
+          <div>    
+            <Badge variant="secondary" className="text-sm">
+              <CalendarDays className="w-4 h-4 mr-1" />
+              Últimos datos obtenidos
+            </Badge>
+             <Button variant={"outline"} onClick={enviarAlertas}><BellRing></BellRing></Button>
+          </div>
         </div>
 
         {/* KPIs */}

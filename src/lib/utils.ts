@@ -109,6 +109,10 @@ declare global {
         getReporteVentasPorMes:(fechaDesde:string,fechaHasta:string)=>Promise<ventasPorMesReporte[]>;
         getListaVentasPorMes:(fechaDesde:string,fechaHasta:string)=>Promise<listaVentasPorMes[]>;
 
+
+        /////////////alertas////////////////
+        alertarUser:()=>Promise<{success:boolean, message:string}>;
+
       };
     }
   }

@@ -4,9 +4,10 @@ import cartel from "@/res/Cartel.png"
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "./ui/button";
 import DialogConfirmVenta from "./confirmVenta";
-import React from "react";
+import React, { useState } from "react";
 import { useListaProductos } from "@/hooks/listaProductos";
 import { useHotkeys } from "react-hotkeys-hook";
+import DialogNuevoProductoTemp from "./dialogNuevoProductoTemp";
 
 
 interface BarProps {
@@ -15,12 +16,22 @@ interface BarProps {
 
 export default function Bar({ busquedaRef }: BarProps = {}){
    const[isOpen, setIsOpen]=React.useState(false)
+   const [nuevoProductoTemp, setNuevoProductoTemp]=useState(false)
    const {getTotalPrice, getTotalItems, carrito}=useListaProductos()
    
    useHotkeys(
     'alt+k', 
     () => {
        setIsOpen(true);
+    },
+    // AQUÍ ESTÁ LA MAGIA 👇
+    { enableOnFormTags: true }
+  );
+
+   useHotkeys(
+    'alt+n', 
+    () => {
+       setNuevoProductoTemp(true);
     },
     // AQUÍ ESTÁ LA MAGIA 👇
     { enableOnFormTags: true }
@@ -62,6 +73,10 @@ export default function Bar({ busquedaRef }: BarProps = {}){
                      <img src={cartel} alt={""} height={500}></img>                                                               
                   </div>
 
+                  <div className="mt-5 flex justify-center">
+                     <Button onClick={() => setNuevoProductoTemp(true)} className="text-md h-10 w-full bg-gray-400 hover:bg-red-600 text-black font-bold">Nuevo producto temp (alt+n)</Button>
+                  </div>
+
                   <div className="mt-8 flex justify-center items-center">
                      <a href="https://mi.redmultipagos.com.mx/catalogos_productos_responsivo.jsp" target="blank" className="flex justify-center items-center text-3xl h-20 w-full bg-yellow-400 hover:bg-yellow-600 text-black font-bold">Recargas</a>
                   </div>
@@ -70,6 +85,7 @@ export default function Bar({ busquedaRef }: BarProps = {}){
             </div>
          </div>
          <DialogConfirmVenta isOpen={isOpen} onOpenChange={setIsOpen} busquedaRef={busquedaRef}></DialogConfirmVenta>
+         <DialogNuevoProductoTemp isOpen={nuevoProductoTemp} setIsOpen={setNuevoProductoTemp} busquedaRef={busquedaRef}></DialogNuevoProductoTemp>
       </aside>
     )
 }

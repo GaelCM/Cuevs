@@ -7,7 +7,7 @@ import { registerVentasController } from './controllers/ventasController.js';
 import { registerTestController } from './controllers/testController.js';
 import { authenticationController } from './controllers/authenticationController.js';
 import { registerDashboardController } from './controllers/dashboardController.js';
-import {registerUsuariosController} from './controllers/usuariosController.js';
+import { registerUsuariosController } from './controllers/usuariosController.js';
 import { registerProveedoresController } from './controllers/proveedoresController.js';
 import { registerInventarioController } from './controllers/inventarioController.js';
 import { deudoresController } from './controllers/deudoresController.js';
@@ -16,6 +16,8 @@ import { CortesController } from './controllers/cortesController.js';
 import { cortesDashboardController } from './controllers/cortesDashboard.js';
 import { gastosController } from './controllers/gastosController.js';
 import { registerReportesGeneral } from './controllers/reportesGeneralController.js';
+import { scheduleJob } from 'node-schedule';
+import { registerAlertasController, generarReporteStock } from './controllers/alertas.js';
 
 
 function createWindow() {
@@ -33,19 +35,19 @@ function createWindow() {
 
     const isDev = process.env.NODE_ENV !== 'production';
 
-    /*if (isDev) {
+    if (isDev) {
         // En desarrollo, carga desde el servidor local de Vite/React
         mainWindow.loadURL('http://localhost:5173'); // Cambia el puerto si usas otro
     } else {
         // En producción, carga el archivo generado
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
-    }*/
-    mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
+    }
+    //mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
 }
 
 app.whenReady().then(() => {
     createWindow();
-    
+
     authenticationController();
     registerDashboardController();
     registerTestController();
@@ -61,6 +63,41 @@ app.whenReady().then(() => {
     cortesDashboardController();
     gastosController();
     registerReportesGeneral();
+    registerAlertasController();
+
+    // Programar la generación del reporte diario a la 4:00 PM
+    scheduleJob('0 16 * * *', async () => {
+        console.log('Iniciando generación de reporte diario...');
+        const reporte = await generarReporteStock();
+        if (reporte.success) {
+            console.log('Reporte generado exitosamente');
+        } else {
+            console.error('Error al generar reporte a la 4:00 PM:', reporte.error);
+        }
+    });
+
+    // Programar la generación del reporte diario a la 9:00 AM
+    scheduleJob('0 9 * * *', async () => {
+        console.log('Iniciando generación de reporte diario...');
+        const reporte = await generarReporteStock();
+        if (reporte.success) {
+            console.log('Reporte generado exitosamente');
+        } else {
+            console.error('Error al generar reporte a la 9:00 AM:', reporte.error);
+        }
+    });
+
+
+    // Programar la generación del reporte diario a la 8:00 AM
+    scheduleJob('0 20 * * *', async () => {
+        console.log('Iniciando generación de reporte diario...');
+        const reporte = await generarReporteStock();
+        if (reporte.success) {
+            console.log('Reporte generado exitosamente');
+        } else {
+            console.error('Error al generar reporte a la 9:00 AM:', reporte.error);
+        }
+    });
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();

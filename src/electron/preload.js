@@ -75,6 +75,9 @@ contextBridge.exposeInMainWorld('electronApi', {
 
     /////////reportesGenerales////////////
     getReporteVentasPorMes:(fechaDesde,fechaHasta)=>ipcRenderer.invoke('get-reporteVentasPorMes',fechaDesde,fechaHasta),
-    getListaVentasPorMes:(fechaDesde,fechaHasta)=>ipcRenderer.invoke('get-listaVentasPorMes',fechaDesde,fechaHasta)
+    getListaVentasPorMes:(fechaDesde,fechaHasta)=>ipcRenderer.invoke('get-listaVentasPorMes',fechaDesde,fechaHasta),
+
+    //////////alertas/////////////////
+    alertarUser:()=>ipcRenderer.invoke('generar-reporte-stock'),
     
   });

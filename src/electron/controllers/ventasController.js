@@ -44,15 +44,22 @@ function registerVentasController() {
 
           // 1. Verificar stock disponible antes de procesar la venta
           for (const producto of productos) {
-              const productInfo = getStock.get(producto.product.idProducto);
+              const idProducto = producto.product.idProducto;
+
+              // Saltar validaciones de stock para productos temporales
+              if (typeof idProducto === "string" && idProducto.startsWith("temp-")) {
+                  continue;
+              }
+
+              const productInfo = getStock.get(idProducto);
               
               if (!productInfo) {
-                  throw new Error(`Producto con ID ${producto.product.idProducto} no encontrado`);
+                  throw new Error(`Producto con ID ${idProducto} no encontrado`);
               }
               
               if (productInfo.stockActual < producto.quantity) {
                   throw new Error(
-                      `Stock insuficiente para el producto "${productInfo.nombreProducto || 'ID: ' + producto.product.idProducto}". 
+                      `Stock insuficiente para el producto "${productInfo.nombreProducto || 'ID: ' + idProducto}". 
                       Stock disponible: ${productInfo.stockActual}, Cantidad solicitada: ${producto.quantity}`
                   );
               }
@@ -62,28 +69,34 @@ function registerVentasController() {
           const { idVenta } = getLastId.get();
       
           for (const producto of productos) {
+            const idProducto = producto.product.idProducto;
             const subtotal = producto.product.precio * producto.quantity; // aqui se calcula el subtotal de la venta
             insertDetalle.run(
               idVenta,
-              producto.product.idProducto,
+              idProducto,
               producto.quantity,
               producto.product.precio,
               subtotal
             );
 
+            // Si el producto es temporal, no actualizamos stock ni registramos movimiento
+            if (typeof idProducto === "string" && idProducto.startsWith("temp-")) {
+                continue;
+            }
+
             // Obtener stock actual y calcular nuevo stock
-            const productInfo = getStock.get(producto.product.idProducto);
+            const productInfo = getStock.get(idProducto);
 
             const stockAnterior = productInfo.stockActual;
 
             const stockNuevo = stockAnterior - producto.quantity;
 
             // Actualizar stock del producto
-            updateStock.run(stockNuevo, producto.product.idProducto);
+            updateStock.run(stockNuevo, idProducto);
 
             // Registrar el movimiento de inventario
             insertMovimiento.run(
-                producto.product.idProducto,
+                idProducto,
                 'salida',
                 producto.quantity,
                 stockAnterior,
@@ -140,16 +153,18 @@ function registerVentasController() {
                 v.cambioVenta,
                 v.idUsuario,
                 v.idStatusVenta,
-                p.nombreProducto,
+                dv.idProducto,
+                COALESCE(p.nombreProducto, dv.idProducto) AS nombreProducto,
                 dv.cantidadProducto,
                 dv.precioUnitario,
                 dv.subtotal,
-                p.descripcion
+                COALESCE(p.descripcion, '') AS descripcion,
+                CASE WHEN p.idProducto IS NULL THEN 1 ELSE 0 END AS esTemporal
             FROM ventas v
             INNER JOIN detalleVentas dv ON v.idVenta = dv.idVenta
-            INNER JOIN productos p ON dv.idProducto = p.idProducto
+            LEFT JOIN productos p ON dv.idProducto = p.idProducto
             WHERE v.idVenta = ?
-            ORDER BY p.nombreProducto
+            ORDER BY nombreProducto
         `).all(idVenta);
         return detalles;
     });

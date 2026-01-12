@@ -13,6 +13,7 @@ import type { Producto } from "@/types/Productos";
 import { ArrowDown, ArrowUp, Pencil, Search, ShoppingCart, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { useHotkeys } from "react-hotkeys-hook";
 import { toast } from "sonner";
 
 
@@ -21,15 +22,32 @@ import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 30;
 
-export default function TablaDeProductos(){
+export default function TablaDeProductos({ isExternalModalOpen = false }: { isExternalModalOpen?: boolean }) {
     const [productos, setProductos] = useState<Producto[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredProducts, setFilteredProducts] = useState<Producto[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [openConfirm, setOpenConfirm] = useState(false);
     const [productoAEliminar, setProductoAEliminar] = useState<string | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState(0); // Nuevo estado para selección
 
-    const {addProduct}=useListaProductos();
+
+    const { addProduct } = useListaProductos();
+
+    // Resetear selección cuando cambia la página o el filtro
+    useEffect(() => {
+        setSelectedIndex(0);
+    }, [currentPage, searchTerm, filteredProducts.length]);
+
+    // Scroll automático
+    useEffect(() => {
+        const element = document.getElementById(`table-row-${selectedIndex}`);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, [selectedIndex, currentPage, searchTerm]);
+
+
 
     const obtenerProductos = async () => {
         const productos = await getProductosLocal();
@@ -38,22 +56,24 @@ export default function TablaDeProductos(){
         }
     }
 
-    const deleteProductos = async (idProducto:string) => {
-        
-            const response=await eliminarProducto(idProducto)
-            if(!response?.success){
-                toast.error('Error al eliminar el producto', {
-                    description:`${response?.message}`,})
-            }else{
-                toast.success('Producto eliminado correctamente', {
-                    description:`El producto se ha eliminado correctamente`,})
-                    obtenerProductos()
-            }
-        
+    const deleteProductos = async (idProducto: string) => {
+
+        const response = await eliminarProducto(idProducto)
+        if (!response?.success) {
+            toast.error('Error al eliminar el producto', {
+                description: `${response?.message}`,
+            })
+        } else {
+            toast.success('Producto eliminado correctamente', {
+                description: `El producto se ha eliminado correctamente`,
+            })
+            obtenerProductos()
+        }
+
     }
 
     // useEffect para obtener productos solo al montar el componente
-    useEffect(() => {     
+    useEffect(() => {
         obtenerProductos();
     }, []);
 
@@ -64,7 +84,7 @@ export default function TablaDeProductos(){
             return item.nombreProducto.toLowerCase().includes(lowercasedFilter);
         });
         setFilteredProducts(filteredData);
-        setCurrentPage(1); 
+        setCurrentPage(1);
     }, [productos, searchTerm]);
 
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -72,11 +92,36 @@ export default function TablaDeProductos(){
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
+    // --- HOTKEYS ---
+    useHotkeys('down', (e) => {
+        e.preventDefault();
+        setSelectedIndex(prev => (prev + 1) >= currentProducts.length ? 0 : prev + 1);
+    }, { enableOnFormTags: true, enabled: !isExternalModalOpen && !openConfirm }, [currentProducts, isExternalModalOpen, openConfirm]);
+
+    useHotkeys('up', (e) => {
+        e.preventDefault();
+        setSelectedIndex(prev => (prev - 1) < 0 ? currentProducts.length - 1 : prev - 1);
+    }, { enableOnFormTags: true, enabled: !isExternalModalOpen && !openConfirm }, [currentProducts, isExternalModalOpen, openConfirm]);
+
+    // Enter para Agregar al Carrito
+    useHotkeys('enter', (e) => {
+        e.preventDefault();
+        const producto = currentProducts[selectedIndex];
+        if (producto) {
+            if (producto.stockActual > 0 && producto.idEstado !== 0) {
+                addProduct(producto);
+                toast.success('Producto agregado al carrito');
+            } else {
+                toast.error('No se puede agregar', { description: 'Producto inactivo o sin stock' });
+            }
+        }
+    }, { enableOnFormTags: true, enabled: !isExternalModalOpen && !openConfirm }, [currentProducts, selectedIndex, addProduct, isExternalModalOpen, openConfirm]);
+
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
 
-    return(
+    return (
         <Card className="border-none shadow-none">
             <CardHeader>
                 <div className="relative">
@@ -105,8 +150,16 @@ export default function TablaDeProductos(){
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {currentProducts.map((producto) =>(
-                            <TableRow key={producto.idProducto}>
+                        {currentProducts.map((producto, index) => (
+                            <TableRow
+                                key={producto.idProducto}
+                                id={`table-row-${index}`}
+                                onClick={() => setSelectedIndex(index)}
+                                className={`cursor-pointer transition-colors ${selectedIndex === index
+                                    ? "bg-red-100 border-l-4 border-l-red-500"
+                                    : "hover:bg-red-100"
+                                    }`}
+                            >
                                 <TableCell className="font-medium hidden sm:table-cell">{producto.idProducto}</TableCell>
                                 <TableCell className="font-medium">{producto.nombreProducto}</TableCell>
                                 <TableCell>
@@ -155,15 +208,16 @@ export default function TablaDeProductos(){
                                         </Button>
                                         <Button
                                             variant={"outline"}
-                                            size="icon"                                         
+                                            size="icon"
                                             onClick={() => {
-                                                if(producto.stockActual>0&&producto.idEstado!==0){
-                                                addProduct(producto)
-                                                toast.success('Producto agregado al carrito')
-                                                }else{
+                                                if (producto.stockActual > 0 && producto.idEstado !== 0) {
+                                                    addProduct(producto)
+                                                    toast.success('Producto agregado al carrito')
+                                                } else {
                                                     toast.error('No se puede agregar el producto al carrito', {
-                                                        description:`El producto está inactivo o no tiene stock suficiente`,})
-                                                }            
+                                                        description: `El producto está inactivo o no tiene stock suficiente`,
+                                                    })
+                                                }
                                             }}
                                         >
                                             <ShoppingCart className="h-4 w-4" />
@@ -175,7 +229,7 @@ export default function TablaDeProductos(){
                     </TableBody>
                 </Table>
             </CardContent>
-            
+
             <CardFooter>
                 <div className="text-xs text-muted-foreground">
                     Mostrando <strong>{startIndex + 1}-{Math.min(endIndex, filteredProducts.length)}</strong> de <strong>{filteredProducts.length}</strong> productos
@@ -183,8 +237,8 @@ export default function TablaDeProductos(){
                 <Pagination>
                     <PaginationContent>
                         <PaginationItem>
-                            <PaginationPrevious 
-                                href="#" 
+                            <PaginationPrevious
+                                href="#"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     if (currentPage > 1) handlePageChange(currentPage - 1);
@@ -194,8 +248,8 @@ export default function TablaDeProductos(){
                         </PaginationItem>
                         {[...Array(totalPages)].map((_, i) => (
                             <PaginationItem key={i}>
-                                <PaginationLink 
-                                    href="#" 
+                                <PaginationLink
+                                    href="#"
                                     isActive={i + 1 === currentPage}
                                     onClick={(e) => {
                                         e.preventDefault();
@@ -207,8 +261,8 @@ export default function TablaDeProductos(){
                             </PaginationItem>
                         ))}
                         <PaginationItem>
-                            <PaginationNext 
-                                href="#" 
+                            <PaginationNext
+                                href="#"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     if (currentPage < totalPages) handlePageChange(currentPage + 1);
